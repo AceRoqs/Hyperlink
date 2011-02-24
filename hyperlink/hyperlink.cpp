@@ -20,13 +20,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-//=========================================================================
-// This is a basic Hyperlink Win32 control.  It is completely standalone,
-// in that it doesn't subclass any existing Win32 controls.  It supports
-// basic coloring, underline, hovering, and focus, but it doesn't support
-// anything advanced, such as IME, RTL text, tooltips, parent notifications,
-// or drag and drop.
-//=========================================================================
 #include <windows.h>
 #include <windowsx.h>
 #include <memory>
