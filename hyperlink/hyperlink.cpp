@@ -14,12 +14,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+#include <cassert>
 #include <windows.h>
 #include <windowsx.h>
 #include <memory>
-#include <cassert>
 #include <string>
-#include "hyperlink.h"
+#include "hyperlink.h"  // Pick up forward declarations to ensure correctness.
 
 PCTSTR hyperlink_control_class = TEXT("Hyperlink_control_class");
 
@@ -27,8 +27,8 @@ PCTSTR hyperlink_control_class = TEXT("Hyperlink_control_class");
 class Hyperlink_control
 {
 protected:
-    Hyperlink_control(_In_ HWND window);
-    ~Hyperlink_control();
+    Hyperlink_control(_In_ HWND window);    // Protected to ensure heap-only creation.
+    ~Hyperlink_control();                   // Protected to prevent external destruction.
 
     static LRESULT CALLBACK window_proc(_In_ HWND window, UINT message, WPARAM w_param, LPARAM l_param);
     void on_set_font(_In_opt_ HFONT font, BOOL redraw);
