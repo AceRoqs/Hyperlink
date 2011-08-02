@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Manifests">
+      <UniqueIdentifier>{d53a1d14-d03b-4382-9e29-fefd0cafdc1f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="winmain.cpp">
@@ -30,6 +33,8 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <Manifest Include="testapp.exe.manifest" />
+    <Manifest Include="testapp.exe.manifest">
+      <Filter>Manifests</Filter>
+    </Manifest>
   </ItemGroup>
 </Project>
