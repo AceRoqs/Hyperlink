@@ -100,6 +100,12 @@ void unregister_hyperlink_class(_In_ HINSTANCE instance)
 }
 
 //---------------------------------------------------------------------------
+bool is_link_length_valid(const std::basic_string<TCHAR>& link_name)
+{
+    return link_name.length() < INT_MAX;
+}
+
+//---------------------------------------------------------------------------
 Hyperlink_control::Hyperlink_control(_In_ HWND window) :
     m_window(window),
     m_font(nullptr)
@@ -136,7 +142,7 @@ LRESULT CALLBACK Hyperlink_control::window_proc(_In_ HWND window,   // Handle to
                 CREATESTRUCT* create_struct = reinterpret_cast<CREATESTRUCT*>(l_param);
                 std::basic_string<TCHAR> link_name(create_struct->lpszName);
 
-                if(link_name.length() < INT_MAX)
+                if(is_link_length_valid(link_name))
                 {
                     std::swap(link_name, new_control->m_link_name);
                     ::SetWindowLongPtr(window,
@@ -171,7 +177,7 @@ LRESULT CALLBACK Hyperlink_control::window_proc(_In_ HWND window,   // Handle to
             {
                 std::basic_string<TCHAR> link_name(reinterpret_cast<PCTSTR>(l_param));
 
-                if(link_name.length() < INT_MAX)
+                if(is_link_length_valid(link_name))
                 {
                     // Ensure that setting the title text of the control and saving the
                     // text in a member variable is atomic.
