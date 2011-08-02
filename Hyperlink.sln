@@ -1,12 +1,12 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "hyperlink", "hyperlink\hyperlink.vcxproj", "{2A2DB128-67B2-4C9C-A7DF-77C591288BA0}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testapp", "testapp\testapp.vcxproj", "{BBD0D6EA-578C-471B-9983-8C874265F977}"
 	ProjectSection(ProjectDependencies) = postProject
 		{2A2DB128-67B2-4C9C-A7DF-77C591288BA0} = {2A2DB128-67B2-4C9C-A7DF-77C591288BA0}
 	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "hyperlink", "hyperlink\hyperlink.vcxproj", "{2A2DB128-67B2-4C9C-A7DF-77C591288BA0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
