@@ -136,12 +136,17 @@ LRESULT CALLBACK Hyperlink_control::window_proc(__in HWND window,   // Handle to
                 CREATESTRUCT* create_struct = reinterpret_cast<CREATESTRUCT*>(l_param);
                 std::basic_string<TCHAR> link_name(create_struct->lpszName);
 
-                std::swap(link_name, new_control->m_link_name);
-                ::SetWindowLongPtr(window, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(new_control.release()));
+                if(link_name.length() < INT_MAX)
+                {
+                    std::swap(link_name, new_control->m_link_name);
+                    ::SetWindowLongPtr(window,
+                                       GWLP_USERDATA,
+                                       reinterpret_cast<LONG_PTR>(new_control.release()));
 
-                // Indicate that the window creation succeeded and that CreateWindow
-                // should NOT return a nullptr handle.
-                return_value = 1;
+                    // Indicate that the window creation succeeded and that CreateWindow
+                    // should NOT return a nullptr handle.
+                    return_value = 1;
+                }
             }
             catch(const std::bad_alloc&)
             {
@@ -166,12 +171,15 @@ LRESULT CALLBACK Hyperlink_control::window_proc(__in HWND window,   // Handle to
             {
                 std::basic_string<TCHAR> link_name(reinterpret_cast<PCTSTR>(l_param));
 
-                // Ensure that setting the title text of the control and saving the
-                // text in a member variable is atomic.
-                return_value = ::DefWindowProc(window, message, w_param, l_param);
-                if(return_value)
+                if(link_name.length() < INT_MAX)
                 {
-                    std::swap(link_name, control->m_link_name);
+                    // Ensure that setting the title text of the control and saving the
+                    // text in a member variable is atomic.
+                    return_value = ::DefWindowProc(window, message, w_param, l_param);
+                    if(return_value)
+                    {
+                        std::swap(link_name, control->m_link_name);
+                    }
                 }
             }
             catch(const std::bad_alloc&)
@@ -317,7 +325,7 @@ void Hyperlink_control::on_paint()
                  ETO_CLIPPED,                   // options
                  &client_rect,                  // clip rectangle
                  m_link_name.c_str(),           // string
-                 m_link_name.length(),          // character count
+                 static_cast<UINT>(m_link_name.length()),   // character count
                  nullptr);                      // distance between origins of cells
 
     ::SelectObject(context, old_font);
@@ -409,7 +417,10 @@ void Hyperlink_control::get_hit_rect(__in HDC device_context, __out RECT* hit_re
     HFONT font = static_cast<HFONT>(::SelectObject(device_context, m_font));
 
     SIZE size;
-    ::GetTextExtentPoint32(device_context, m_link_name.c_str(), m_link_name.length(), &size);
+    ::GetTextExtentPoint32(device_context,
+                           m_link_name.c_str(),
+                           static_cast<int>(m_link_name.length()),
+                           &size);
 
     // Clip the text extents to the client rectangle.
     ::GetClientRect(m_window, hit_rect);

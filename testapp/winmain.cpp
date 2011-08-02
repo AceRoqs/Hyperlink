@@ -25,8 +25,7 @@ INT_PTR CALLBACK dialog_proc(__in HWND window,
                              WPARAM w_param,
                              LPARAM l_param)
 {
-    // Prevent unreferenced parameter.
-    (l_param);
+    (l_param);  // Prevent unreferenced parameter.
 
     BOOL message_processed = FALSE;
 
