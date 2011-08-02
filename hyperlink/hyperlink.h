@@ -25,8 +25,8 @@ extern "C" {
 // a hyperlink control.
 extern PCTSTR hyperlink_control_class;
 
-HRESULT register_hyperlink_class(__in HINSTANCE instance);
-void unregister_hyperlink_class(__in HINSTANCE instance);
+HRESULT register_hyperlink_class(_In_ HINSTANCE instance);
+void unregister_hyperlink_class(_In_ HINSTANCE instance);
 
 #ifdef __cplusplus
 }

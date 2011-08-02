@@ -27,20 +27,20 @@ PCTSTR hyperlink_control_class = TEXT("Hyperlink_control_class");
 class Hyperlink_control
 {
 protected:
-    Hyperlink_control(__in HWND window);
+    Hyperlink_control(_In_ HWND window);
     ~Hyperlink_control();
 
-    static LRESULT CALLBACK window_proc(__in HWND window, UINT message, WPARAM w_param, LPARAM l_param);
-    void on_set_font(__in_opt HFONT font, BOOL redraw);
+    static LRESULT CALLBACK window_proc(_In_ HWND window, UINT message, WPARAM w_param, LPARAM l_param);
+    void on_set_font(_In_opt_ HFONT font, BOOL redraw);
     void on_paint();
     void on_focus();
     void on_mouse_move(LONG x, LONG y);
     void on_l_button_down(LONG x, LONG y);
     void on_l_button_up(LONG x, LONG y);
-    void on_key_down(__in WPARAM key);
+    void on_key_down(_In_ WPARAM key);
 
     void navigate();
-    void get_hit_rect(__in HDC device_context, __out RECT* hit_rect);
+    void get_hit_rect(_In_ HDC device_context, _Out_ RECT* hit_rect);
     bool is_in_hit_rect(LONG x, LONG y);
 
 private:
@@ -53,12 +53,12 @@ private:
     Hyperlink_control& operator=(const Hyperlink_control&);
 
     // Required to avoid making window_proc public to all.
-    friend HRESULT register_hyperlink_class(__in HINSTANCE instance);
+    friend HRESULT register_hyperlink_class(_In_ HINSTANCE instance);
 
     // Required for unique_ptr access, as the destructor is protected.
     struct deleter
     {
-        void operator()(__in Hyperlink_control* control) const
+        void operator()(_In_ Hyperlink_control* control) const
         {
             delete control;
         }
@@ -66,7 +66,7 @@ private:
 };
 
 //---------------------------------------------------------------------------
-HRESULT register_hyperlink_class(__in HINSTANCE instance)
+HRESULT register_hyperlink_class(_In_ HINSTANCE instance)
 {
     // This window class was derived by calling GetClassInfo on a 'static' control.
     WNDCLASSEX window_class;
@@ -94,13 +94,13 @@ HRESULT register_hyperlink_class(__in HINSTANCE instance)
 }
 
 //---------------------------------------------------------------------------
-void unregister_hyperlink_class(__in HINSTANCE instance)
+void unregister_hyperlink_class(_In_ HINSTANCE instance)
 {
     ::UnregisterClass(hyperlink_control_class, instance);
 }
 
 //---------------------------------------------------------------------------
-Hyperlink_control::Hyperlink_control(__in HWND window) :
+Hyperlink_control::Hyperlink_control(_In_ HWND window) :
     m_window(window),
     m_font(nullptr)
 {
@@ -113,7 +113,7 @@ Hyperlink_control::~Hyperlink_control()
 }
 
 //---------------------------------------------------------------------------
-LRESULT CALLBACK Hyperlink_control::window_proc(__in HWND window,   // Handle to the window.
+LRESULT CALLBACK Hyperlink_control::window_proc(_In_ HWND window,   // Handle to the window.
                                                 UINT message,       // Message that was sent.
                                                 WPARAM w_param,     // First message parameter.
                                                 LPARAM l_param)     // Second message parameter.
@@ -269,7 +269,7 @@ LRESULT CALLBACK Hyperlink_control::window_proc(__in HWND window,   // Handle to
 }
 
 //---------------------------------------------------------------------------
-void Hyperlink_control::on_set_font(__in_opt HFONT font, BOOL redraw)
+void Hyperlink_control::on_set_font(_In_opt_ HFONT font, BOOL redraw)
 {
     m_font = font;
     if(redraw)
@@ -388,7 +388,7 @@ void Hyperlink_control::on_l_button_up(LONG x, LONG y)
 }
 
 //---------------------------------------------------------------------------
-void Hyperlink_control::on_key_down(__in WPARAM key)
+void Hyperlink_control::on_key_down(_In_ WPARAM key)
 {
     if((VK_SPACE == key) || (VK_RETURN == key))
     {
@@ -412,7 +412,7 @@ void Hyperlink_control::navigate()
 }
 
 //---------------------------------------------------------------------------
-void Hyperlink_control::get_hit_rect(__in HDC device_context, __out RECT* hit_rect)
+void Hyperlink_control::get_hit_rect(_In_ HDC device_context, _Out_ RECT* hit_rect)
 {
     HFONT font = static_cast<HFONT>(::SelectObject(device_context, m_font));
 

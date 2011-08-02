@@ -20,7 +20,7 @@ limitations under the License.
 #include "resource.h"
 
 //---------------------------------------------------------------------------
-INT_PTR CALLBACK dialog_proc(__in HWND window,
+INT_PTR CALLBACK dialog_proc(_In_ HWND window,
                              UINT message,
                              WPARAM w_param,
                              LPARAM l_param)
@@ -43,6 +43,8 @@ INT_PTR CALLBACK dialog_proc(__in HWND window,
 }
 
 //---------------------------------------------------------------------------
+// Declspec SAL is used instead of attribute SAL, as the WinMain declaration
+// in the system headers still uses declspec SAL.
 int WINAPI _tWinMain(__in HINSTANCE instance,   // Handle to the program instance.
                      HINSTANCE,                 // hInstPrev - Unused in Win32.
                      __in PTSTR command_line,   // Command line.
