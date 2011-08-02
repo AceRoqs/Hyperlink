@@ -21,9 +21,9 @@ exposed to register the window class itself.  The testapp folder
 is a simple application which demonstrates this.
 
 The code is a rather modern C++ interpretation of pure Win32 code,
-albeit without RAII for the GDI objects, which would have been
-helpful.  With that in mind, it does require a compiler, such as
-Visual C++ 2010, which has C++0x support (particularly unique\_ptr).
+including RAII for the GDI objects.  With that in mind, it does
+require a compiler, such as Visual C++ 2010, which has C++0x
+support (particularly unique\_ptr).
 
 Stylistically, the code is based on the JSF coding standards.  I
 chose this as a reasonable bridge of styles between traditional

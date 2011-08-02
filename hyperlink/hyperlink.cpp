@@ -15,6 +15,7 @@ limitations under the License.
 */
 
 #include <cassert>
+#include <functional>
 #include <windows.h>
 #include <windowsx.h>
 #include <memory>
@@ -287,8 +288,15 @@ void Hyperlink_control::on_set_font(_In_opt_ HFONT font, BOOL redraw)
 //---------------------------------------------------------------------------
 void Hyperlink_control::on_paint()
 {
+    // NOTE: Send WM_CTLCOLORSTATIC to parent here if necessary.
     PAINTSTRUCT paint_struct;
-    HDC context = ::BeginPaint(m_window, &paint_struct);
+    const HWND window = m_window;   // Lambda cannot capture member variables.
+    std::unique_ptr<HDC__, std::function<void (HDC)>> context(
+        ::BeginPaint(window, &paint_struct),
+        [window, &paint_struct](HDC)
+        {
+            ::EndPaint(window, &paint_struct);
+        });
 
     // Get the hyperlink color, but if it does not exist, then
     // default to the blue-ish color as default on Win7.
@@ -298,22 +306,32 @@ void Hyperlink_control::on_paint()
         color = RGB(0, 102, 204);
     }
 
-    ::SetTextColor(context, color);
-    ::SetBkMode(context, TRANSPARENT);
+    ::SetTextColor(context.get(), color);
+    ::SetBkMode(context.get(), TRANSPARENT);
 
     // Hyperlink_control uses the parent font sent via WM_SETFONT.
     HFONT current_font = m_font;
     if(nullptr == current_font)
     {
-        current_font = static_cast<HFONT>(::GetCurrentObject(context, OBJ_FONT));
+        current_font = static_cast<HFONT>(::GetCurrentObject(context.get(), OBJ_FONT));
     }
 
     LOGFONT log_font;
     ::GetObject(current_font, sizeof(log_font), &log_font);
 
     log_font.lfUnderline = TRUE;
-    HFONT underline_font = ::CreateFontIndirect(&log_font);
-    HFONT old_font = SelectFont(context, underline_font);
+    std::unique_ptr<HFONT__, std::function<void (HFONT)>> underline_font(
+        ::CreateFontIndirect(&log_font),
+        [](HFONT underline_font)
+        {
+            ::DeleteObject(underline_font);
+        });
+    std::unique_ptr<HFONT__, std::function<void (HFONT)>> old_font(
+        SelectFont(context.get(), underline_font.get()),
+        [&context](HFONT old_font)
+        {
+            ::SelectObject(context.get(), old_font);
+        });
 
     RECT client_rect;
     ::GetClientRect(m_window, &client_rect);
@@ -325,7 +343,7 @@ void Hyperlink_control::on_paint()
     // ExtTextOut as being a count of characters:
     // http://msdn.microsoft.com/en-us/library/dd145112%28v=vs.85%29.aspx
     // ExtTextOut is used instead of TextOut so that the text is properly clipped.
-    ::ExtTextOut(context,                       // hdc
+    ::ExtTextOut(context.get(),                 // hdc
                  client_rect.left,              // X
                  client_rect.top,               // Y
                  ETO_CLIPPED,                   // options
@@ -333,26 +351,25 @@ void Hyperlink_control::on_paint()
                  m_link_name.c_str(),           // string
                  static_cast<UINT>(m_link_name.length()),   // character count
                  nullptr);                      // distance between origins of cells
-
-    ::SelectObject(context, old_font);
-    ::DeleteObject(underline_font);
-    ::EndPaint(m_window, &paint_struct);
-
 }
 
 //---------------------------------------------------------------------------
 void Hyperlink_control::on_focus()
 {
-    HDC device_context = ::GetDC(m_window);
+    const HWND window = m_window;   // Lambda cannot capture member variables.
+    std::unique_ptr<HDC__, std::function<void (HDC)>> device_context(
+        ::GetDC(m_window),
+        [window](HDC device_context)
+        {
+            ::ReleaseDC(window, device_context);
+        });
 
     RECT hit_rect;
-    get_hit_rect(device_context, &hit_rect);
+    get_hit_rect(device_context.get(), &hit_rect);
 
     // DrawFocusRect is an XOR operation, so the same call is used
     // for set focus and remove focus.
-    ::DrawFocusRect(device_context, &hit_rect);
-
-    ::ReleaseDC(m_window, device_context);
+    ::DrawFocusRect(device_context.get(), &hit_rect);
 }
 
 //---------------------------------------------------------------------------
@@ -420,7 +437,12 @@ void Hyperlink_control::navigate()
 //---------------------------------------------------------------------------
 void Hyperlink_control::get_hit_rect(_In_ HDC device_context, _Out_ RECT* hit_rect)
 {
-    HFONT font = static_cast<HFONT>(::SelectObject(device_context, m_font));
+    std::unique_ptr<HFONT__, std::function<void (HFONT)>> font(
+        SelectFont(device_context, m_font),
+        [device_context](HFONT font)
+        {
+            ::SelectObject(device_context, font);
+        });
 
     SIZE size;
     ::GetTextExtentPoint32(device_context,
@@ -432,26 +454,29 @@ void Hyperlink_control::get_hit_rect(_In_ HDC device_context, _Out_ RECT* hit_re
     ::GetClientRect(m_window, hit_rect);
     hit_rect->right = min(hit_rect->right, hit_rect->left + size.cx);
     hit_rect->bottom = min(hit_rect->bottom, hit_rect->top + size.cy);
-
-    ::SelectObject(device_context, font);
 }
 
 //---------------------------------------------------------------------------
 bool Hyperlink_control::is_in_hit_rect(LONG x, LONG y)
 {
     bool is_in_hit_rect = false;
-    HDC device_context = ::GetDC(m_window);
+
+    const HWND window = m_window;   // Lambda cannot capture member variables.
+    std::unique_ptr<HDC__, std::function<void (HDC)>> device_context(
+        ::GetDC(m_window),
+        [window](HDC device_context)
+        {
+            ::ReleaseDC(window, device_context);
+        });
 
     RECT hit_rect;
-    get_hit_rect(device_context, &hit_rect);
+    get_hit_rect(device_context.get(), &hit_rect);
 
     POINT mouse_point = {x, y};
     if(::PtInRect(&hit_rect, mouse_point))
     {
         is_in_hit_rect = true;
     }
-
-    ::ReleaseDC(m_window, device_context);
 
     return is_in_hit_rect;
 }
