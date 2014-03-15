@@ -22,7 +22,7 @@ is a simple application which demonstrates this.
 
 The code is a rather modern C++ interpretation of pure Win32 code,
 including RAII for the GDI objects.  With that in mind, it does
-require a compiler, such as Visual C++ 2010, which has C++0x
+require a compiler, such as Visual C++ 2010, which has C++11
 support (particularly unique\_ptr).
 
 Stylistically, the code is based on the JSF coding standards.  I
