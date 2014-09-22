@@ -45,10 +45,10 @@ INT_PTR CALLBACK dialog_proc(_In_ HWND window,
 //---------------------------------------------------------------------------
 // Declspec SAL is used instead of attribute SAL, as the WinMain declaration
 // in the system headers still uses declspec SAL.
-int WINAPI _tWinMain(__in HINSTANCE instance,   // Handle to the program instance.
-                     HINSTANCE,                 // hInstPrev - Unused in Win32.
-                     __in PTSTR command_line,   // Command line.
-                     int show_command)          // How the window is to be displayed.
+int WINAPI _tWinMain(_In_ HINSTANCE instance,   // Handle to the program instance.
+                     _In_opt_ HINSTANCE,        // hInstPrev - Unused in Win32.
+                     _In_ PTSTR command_line,   // Command line.
+                     _In_ int show_command)     // How the window is to be displayed.
 {
     // Prevent unreferenced parameter.
     (command_line);
