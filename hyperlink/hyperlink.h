@@ -1,5 +1,4 @@
-#ifndef HYPERLINK_H
-#define HYPERLINK_H
+#pragma once
 
 #ifdef __cplusplus
 extern "C" {
@@ -14,7 +13,5 @@ void unregister_hyperlink_class(_In_ HINSTANCE instance);
 
 #ifdef __cplusplus
 }
-#endif
-
 #endif
 
