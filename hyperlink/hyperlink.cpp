@@ -1,9 +1,4 @@
-#include <cassert>
-#include <functional>
-#include <windows.h>
-#include <windowsx.h>
-#include <memory>
-#include <string>
+#include "PreCompile.h"
 #include "hyperlink.h"  // Pick up forward declarations to ensure correctness.
 
 PCTSTR hyperlink_control_class = TEXT("Hyperlink_control_class");

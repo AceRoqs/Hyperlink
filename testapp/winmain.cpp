@@ -1,5 +1,4 @@
-#include <windows.h>
-#include <tchar.h>
+#include "PreCompile.h"
 #include "hyperlink.h"
 #include "resource.h"
 
