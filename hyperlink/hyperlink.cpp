@@ -1,5 +1,5 @@
 #include "PreCompile.h"
-#include "hyperlink.h"  // Pick up forward declarations to ensure correctness.
+#include "Hyperlink.h"  // Pick up forward declarations to ensure correctness.
 
 namespace HyperlinkControl
 {

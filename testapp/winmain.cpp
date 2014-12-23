@@ -1,6 +1,6 @@
 #include "PreCompile.h"
-#include "hyperlink.h"
-#include "resource.h"
+#include "Hyperlink.h"
+#include "Resource.h"
 
 //---------------------------------------------------------------------------
 INT_PTR CALLBACK dialog_proc(_In_ HWND window,
