@@ -155,8 +155,10 @@ LRESULT CALLBACK Hyperlink_control::window_proc(_In_ HWND window,   // Handle to
                     return_value = 1;
                 }
             }
-            catch(const std::bad_alloc&)
+            catch(const std::bad_alloc& ex)
             {
+                UNREFERENCED_PARAMETER(ex);
+
                 // No modification to return_value implies error.
             }
 
@@ -189,8 +191,10 @@ LRESULT CALLBACK Hyperlink_control::window_proc(_In_ HWND window,   // Handle to
                     }
                 }
             }
-            catch(const std::bad_alloc&)
+            catch(const std::bad_alloc& ex)
             {
+                UNREFERENCED_PARAMETER(ex);
+
                 // No modification to return_value implies error.
             }
 
