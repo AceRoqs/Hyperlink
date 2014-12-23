@@ -1,6 +1,9 @@
 #include "PreCompile.h"
 #include "hyperlink.h"  // Pick up forward declarations to ensure correctness.
 
+namespace HyperlinkControl
+{
+
 //---------------------------------------------------------------------------
 class Hyperlink_control
 {
@@ -460,5 +463,7 @@ bool Hyperlink_control::is_in_hit_rect(LONG x, LONG y)
     }
 
     return is_in_hit_rect;
+}
+
 }
 
