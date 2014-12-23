@@ -1,8 +1,6 @@
 #include "PreCompile.h"
 #include "hyperlink.h"  // Pick up forward declarations to ensure correctness.
 
-PCTSTR hyperlink_control_class = TEXT("Hyperlink_control_class");
-
 //---------------------------------------------------------------------------
 class Hyperlink_control
 {
