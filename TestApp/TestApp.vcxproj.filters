@@ -18,11 +18,17 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="PreCompile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="WinMain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="PreCompile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="Resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
