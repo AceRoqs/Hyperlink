@@ -1,8 +1,14 @@
 #include "PreCompile.h"
 #include "Hyperlink.h"  // Pick up forward declarations to ensure correctness.
+#include "Hyperlink.rh"
 
 namespace HyperlinkControl
 {
+
+PCTSTR get_hyperlink_control_class()
+{
+    return HYPERLINK_CONTROL_CLASS;
+}
 
 //---------------------------------------------------------------------------
 class Hyperlink_control
@@ -61,7 +67,7 @@ HRESULT register_hyperlink_class(_In_ HINSTANCE instance)
     window_class.hCursor       = ::LoadCursor(nullptr, IDC_ARROW);
     window_class.hbrBackground = nullptr;
     window_class.lpszMenuName  = nullptr;
-    window_class.lpszClassName = hyperlink_control_class;
+    window_class.lpszClassName = get_hyperlink_control_class();
     window_class.hIconSm       = 0;
 
     HRESULT hr = S_OK;
@@ -77,7 +83,7 @@ HRESULT register_hyperlink_class(_In_ HINSTANCE instance)
 //---------------------------------------------------------------------------
 void unregister_hyperlink_class(_In_ HINSTANCE instance)
 {
-    ::UnregisterClass(hyperlink_control_class, instance);
+    ::UnregisterClass(get_hyperlink_control_class(), instance);
 }
 
 //---------------------------------------------------------------------------

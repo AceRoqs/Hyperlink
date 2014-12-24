@@ -88,6 +88,7 @@
   <ItemGroup>
     <ClInclude Include="PreCompile.h" />
     <ClInclude Include="Hyperlink.h" />
+    <ClInclude Include="Hyperlink.rh" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Hyperlink.cpp" />

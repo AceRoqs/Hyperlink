@@ -25,5 +25,8 @@
     <ClInclude Include="PreCompile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Hyperlink.rh">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
