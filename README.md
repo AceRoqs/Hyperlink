@@ -16,8 +16,8 @@ hovering, and focus.
 Direct access to the control class shouldn't be necessary, as the
 control should be created either through CreateWindowEx or through
 a .RC file.  Therefore, very little is exposed through the header
-file.  `register_hyperlink_class()`, defined in hyperlink.h, is
-exposed to register the window class itself.  The testapp folder
+file.  `register_hyperlink_class()`, defined in Hyperlink.h, is
+exposed to register the window class itself.  The TestApp folder
 is a simple application which demonstrates this.
 
 The code is a rather modern C++ interpretation of pure Win32 code,
