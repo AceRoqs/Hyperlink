@@ -59,6 +59,9 @@
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="..\Hyperlink.props" />
+  </ImportGroup>
   <ItemDefinitionGroup>
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -66,16 +69,16 @@
       <SDLCheck>true</SDLCheck>
       <PrecompiledHeaderFile>PreCompile.h</PrecompiledHeaderFile>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(SolutionDir)Hyperlink</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(HyperlinkDir)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(OutDir)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Hyperlink.lib;user32.lib;gdi32.lib;shell32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(HyperlinkLibDir)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>$(HyperlinkLibraries);user32.lib;gdi32.lib;shell32.lib</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <ResourceCompile>
-      <AdditionalIncludeDirectories>$(SolutionDir)Hyperlink</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(HyperlinkDir)</AdditionalIncludeDirectories>
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug'">
