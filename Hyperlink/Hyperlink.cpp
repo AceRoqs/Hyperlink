@@ -99,12 +99,12 @@ LRESULT CALLBACK Hyperlink_control::window_proc(
     // control is not valid until WM_NCCREATE has been sent.
     Hyperlink_control* control = reinterpret_cast<Hyperlink_control*>(::GetWindowLongPtr(window, GWLP_USERDATA));
 
-    switch(message)
+    try
     {
-        // Sent by CreateWindow.
-        case WM_NCCREATE:
+        switch(message)
         {
-            try
+            // Sent by CreateWindow.
+            case WM_NCCREATE:
             {
                 std::unique_ptr<Hyperlink_control> new_control = std::make_unique<Hyperlink_control>(window);
 
@@ -115,36 +115,29 @@ LRESULT CALLBACK Hyperlink_control::window_proc(
                 {
                     std::swap(link_name, new_control->m_link_name);
                     ::SetWindowLongPtr(window,
-                                       GWLP_USERDATA,
-                                       reinterpret_cast<LONG_PTR>(new_control.release()));
+                                        GWLP_USERDATA,
+                                        reinterpret_cast<LONG_PTR>(new_control.release()));
 
                     // Indicate that the window creation succeeded and that CreateWindow
                     // should NOT return a nullptr handle.
                     return_value = 1;
                 }
-            }
-            catch(const std::bad_alloc& ex)
-            {
-                UNREFERENCED_PARAMETER(ex);
 
                 // No modification to return_value implies error.
+
+                break;
             }
 
-            break;
-        }
+            case WM_NCDESTROY:
+            {
+                ::SetWindowLongPtr(window, GWLP_USERDATA, 0);
+                delete control;
+                control = nullptr;
 
-        case WM_NCDESTROY:
-        {
-            ::SetWindowLongPtr(window, GWLP_USERDATA, 0);
-            delete control;
-            control = nullptr;
+                break;
+            }
 
-            break;
-        }
-
-        case WM_SETTEXT:
-        {
-            try
+            case WM_SETTEXT:
             {
                 std::basic_string<TCHAR> link_name(reinterpret_cast<PCTSTR>(l_param));
 
@@ -158,90 +151,90 @@ LRESULT CALLBACK Hyperlink_control::window_proc(
                         std::swap(link_name, control->m_link_name);
                     }
                 }
-            }
-            catch(const std::bad_alloc& ex)
-            {
-                UNREFERENCED_PARAMETER(ex);
 
                 // No modification to return_value implies error.
+
+                break;
             }
 
-            break;
-        }
-
-        case WM_SETFONT:
-        {
-            control->on_set_font(reinterpret_cast<HFONT>(w_param), LOWORD(l_param));
-            break;
-        }
-
-        case WM_PAINT:
-        {
-            control->on_paint();
-            break;
-        }
-
-        case WM_SETFOCUS:
-        case WM_KILLFOCUS:
-        {
-            control->on_focus();
-            break;
-        }
-
-        case WM_MOUSEMOVE:
-        {
-            control->on_mouse_move(GET_X_LPARAM(l_param), GET_Y_LPARAM(l_param));
-            break;
-        }
-
-        case WM_LBUTTONDOWN:
-        {
-            control->on_l_button_down(GET_X_LPARAM(l_param), GET_Y_LPARAM(l_param));
-            break;
-        }
-
-        case WM_LBUTTONUP:
-        {
-            control->on_l_button_up(GET_X_LPARAM(l_param), GET_Y_LPARAM(l_param));
-            break;
-        }
-
-        case WM_KEYDOWN:
-        {
-            control->on_key_down(w_param);
-            break;
-        }
-
-        case WM_GETDLGCODE:
-        {
-            return_value = ::DefWindowProc(window, message, w_param, l_param);
-
-            // By default, the dialog box will send VK_RETURN to the default control.
-            // This can be handled by the owner window (http://support.microsoft.com/kb/102589),
-            // or by handling WM_GETDLGCODE.
-            MSG* msg = reinterpret_cast<MSG*>(l_param);
-            if((nullptr != msg) && (VK_RETURN == w_param))
+            case WM_SETFONT:
             {
-                if(WM_KEYDOWN == msg->message)
-                {
-                    return_value |= DLGC_WANTALLKEYS;
-                }
-                else if(WM_CHAR == msg->message)
-                {
-                    // Prevent dialog box from beeping when receiving VK_RETURN.
-                    // This can happen if navigate() fails and doesn't change the window focus.
-                    return_value |= DLGC_WANTMESSAGE;
-                }
+                control->on_set_font(reinterpret_cast<HFONT>(w_param), LOWORD(l_param));
+                break;
             }
 
-            break;
-        }
+            case WM_PAINT:
+            {
+                control->on_paint();
+                break;
+            }
 
-        default:
-        {
-            return_value = ::DefWindowProc(window, message, w_param, l_param);
-            break;
+            case WM_SETFOCUS:
+            case WM_KILLFOCUS:
+            {
+                control->on_focus();
+                break;
+            }
+
+            case WM_MOUSEMOVE:
+            {
+                control->on_mouse_move(GET_X_LPARAM(l_param), GET_Y_LPARAM(l_param));
+                break;
+            }
+
+            case WM_LBUTTONDOWN:
+            {
+                control->on_l_button_down(GET_X_LPARAM(l_param), GET_Y_LPARAM(l_param));
+                break;
+            }
+
+            case WM_LBUTTONUP:
+            {
+                control->on_l_button_up(GET_X_LPARAM(l_param), GET_Y_LPARAM(l_param));
+                break;
+            }
+
+            case WM_KEYDOWN:
+            {
+                control->on_key_down(w_param);
+                break;
+            }
+
+            case WM_GETDLGCODE:
+            {
+                return_value = ::DefWindowProc(window, message, w_param, l_param);
+
+                // By default, the dialog box will send VK_RETURN to the default control.
+                // This can be handled by the owner window (http://support.microsoft.com/kb/102589),
+                // or by handling WM_GETDLGCODE.
+                MSG* msg = reinterpret_cast<MSG*>(l_param);
+                if((nullptr != msg) && (VK_RETURN == w_param))
+                {
+                    if(WM_KEYDOWN == msg->message)
+                    {
+                        return_value |= DLGC_WANTALLKEYS;
+                    }
+                    else if(WM_CHAR == msg->message)
+                    {
+                        // Prevent dialog box from beeping when receiving VK_RETURN.
+                        // This can happen if navigate() fails and doesn't change the window focus.
+                        return_value |= DLGC_WANTMESSAGE;
+                    }
+                }
+
+                break;
+            }
+
+            default:
+            {
+                return_value = ::DefWindowProc(window, message, w_param, l_param);
+                break;
+            }
         }
+    }
+    catch(...)
+    {
+        // Prevent exceptions from crossing ABI.  No error recovery is done.
     }
 
     return return_value;
