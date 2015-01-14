@@ -1,6 +1,7 @@
 #include "PreCompile.h"
 #include "Hyperlink.h"  // Pick up forward declarations to ensure correctness.
 #include "Hyperlink.rh"
+#include <WindowsCommon/Wrappers.h>
 
 namespace WindowsCommon
 {
@@ -26,7 +27,7 @@ protected:
     void on_key_down(_In_ WPARAM key) NOEXCEPT;
 
     void navigate() NOEXCEPT;
-    void get_hit_rect(_In_ HDC device_context, _Out_ RECT* hit_rect) NOEXCEPT;
+    RECT get_hit_rect(_In_ HDC device_context) NOEXCEPT;
     bool is_in_hit_rect(LONG x, LONG y) NOEXCEPT;
 
 private:
@@ -337,20 +338,12 @@ void Hyperlink_control::on_paint() NOEXCEPT
 
 void Hyperlink_control::on_focus() NOEXCEPT
 {
-    const HWND window = m_window;   // Lambda cannot capture member variables.
-    std::unique_ptr<HDC__, std::function<void (HDC)>> device_context(
-        ::GetDC(m_window),
-        [window](HDC device_context)
-        {
-            ::ReleaseDC(window, device_context);
-        });
-
-    RECT hit_rect;
-    get_hit_rect(device_context.get(), &hit_rect);
+    const auto device_context = get_device_context(m_window);
+    const RECT hit_rect = get_hit_rect(device_context);
 
     // DrawFocusRect is an XOR operation, so the same call is used
     // for set focus and remove focus.
-    ::DrawFocusRect(device_context.get(), &hit_rect);
+    ::DrawFocusRect(device_context, &hit_rect);
 }
 
 void Hyperlink_control::on_mouse_move(LONG x, LONG y) NOEXCEPT
@@ -410,8 +403,10 @@ void Hyperlink_control::navigate() NOEXCEPT
                    SW_SHOWNORMAL);      // nShowCmd
 }
 
-void Hyperlink_control::get_hit_rect(_In_ HDC device_context, _Out_ RECT* hit_rect) NOEXCEPT
+RECT Hyperlink_control::get_hit_rect(_In_ HDC device_context) NOEXCEPT
 {
+    RECT hit_rect;
+
     std::unique_ptr<HFONT__, std::function<void (HFONT)>> font(
         SelectFont(device_context, m_font),
         [device_context](HFONT font)
@@ -426,27 +421,21 @@ void Hyperlink_control::get_hit_rect(_In_ HDC device_context, _Out_ RECT* hit_re
                            &size);
 
     // Clip the text extents to the client rectangle.
-    ::GetClientRect(m_window, hit_rect);
-    hit_rect->right = min(hit_rect->right, hit_rect->left + size.cx);
-    hit_rect->bottom = min(hit_rect->bottom, hit_rect->top + size.cy);
+    ::GetClientRect(m_window, &hit_rect);
+    hit_rect.right = std::min(hit_rect.right, hit_rect.left + size.cx);
+    hit_rect.bottom = std::min(hit_rect.bottom, hit_rect.top + size.cy);
+
+    return hit_rect;
 }
 
 bool Hyperlink_control::is_in_hit_rect(LONG x, LONG y) NOEXCEPT
 {
     bool is_in_hit_rect = false;
 
-    const HWND window = m_window;   // Lambda cannot capture member variables.
-    std::unique_ptr<HDC__, std::function<void (HDC)>> device_context(
-        ::GetDC(m_window),
-        [window](HDC device_context)
-        {
-            ::ReleaseDC(window, device_context);
-        });
+    const auto device_context = get_device_context(m_window);
+    const RECT hit_rect = get_hit_rect(device_context);
 
-    RECT hit_rect;
-    get_hit_rect(device_context.get(), &hit_rect);
-
-    POINT mouse_point = {x, y};
+    const POINT mouse_point = {x, y};
     if(::PtInRect(&hit_rect, mouse_point))
     {
         is_in_hit_rect = true;

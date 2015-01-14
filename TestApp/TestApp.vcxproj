@@ -44,7 +44,7 @@
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(HyperlinkLibDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>$(HyperlinkLibraries);user32.lib;gdi32.lib;shell32.lib</AdditionalDependencies>
+      <AdditionalDependencies>$(HyperlinkLibraries);user32.lib;gdi32.lib;shell32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ResourceCompile>
       <AdditionalIncludeDirectories>$(HyperlinkDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>

@@ -1,6 +1,9 @@
 #pragma once
 
+#define NOMINMAX
+
 #include <cassert>
+#include <algorithm>
 #include <functional>
 #include <windows.h>
 #include <windowsx.h>
