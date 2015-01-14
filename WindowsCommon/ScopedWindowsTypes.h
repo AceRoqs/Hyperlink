@@ -78,11 +78,13 @@ typedef Scoped_resource<ATOM> Scoped_atom;
 typedef Scoped_resource<HWND> Scoped_window;
 typedef Scoped_resource<HDC> Scoped_device_context;
 typedef Scoped_resource<HANDLE> Scoped_handle;
+typedef Scoped_resource<HFONT> Scoped_font;
 
 Scoped_atom make_scoped_window_class(_In_ ATOM atom, _In_ HINSTANCE instance);
 Scoped_window make_scoped_window(_In_ HWND window);
 Scoped_device_context make_scoped_device_context(_In_ HDC device_context, _In_ HWND window);
 Scoped_handle make_scoped_handle(_In_ HANDLE handle);
+Scoped_font make_scoped_font(_In_ HFONT font, _In_ HDC device_context);
 
 }
 

@@ -296,12 +296,7 @@ void Hyperlink_control::on_paint() NOEXCEPT
         {
             ::DeleteObject(underline_font);
         });
-    std::unique_ptr<HFONT__, std::function<void (HFONT)>> old_font(
-        SelectFont(context.get(), underline_font.get()),
-        [&context](HFONT old_font)
-        {
-            ::SelectObject(context.get(), old_font);
-        });
+    const auto old_font = select_font(underline_font.get(), context.get());
 
     RECT client_rect;
     ::GetClientRect(m_window, &client_rect);
@@ -394,12 +389,7 @@ RECT Hyperlink_control::get_hit_rect(_In_ HDC device_context) NOEXCEPT
 {
     RECT hit_rect;
 
-    std::unique_ptr<HFONT__, std::function<void (HFONT)>> font(
-        SelectFont(device_context, m_font),
-        [device_context](HFONT font)
-        {
-            ::SelectObject(device_context, font);
-        });
+    const auto font = select_font(m_font, device_context);
 
     SIZE size;
     ::GetTextExtentPoint32(device_context,

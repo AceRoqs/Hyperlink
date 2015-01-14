@@ -2,6 +2,7 @@
 #include "Wrappers.h"       // Pick up forward declarations to ensure correctness.
 #include "CheckHR.h"
 #include "WindowMessages.h"
+#include <PortableRuntime/CheckException.h>
 #include <PortableRuntime/Unicode.h>
 #include <PortableRuntime/Tracing.h>
 
@@ -190,6 +191,14 @@ Scoped_handle create_event(
     _Analysis_assume_(0 != handle);
 
     return make_scoped_handle(handle);
+}
+
+Scoped_font select_font(_In_ HFONT font, _In_ HDC device_context)
+{
+    const auto old_font = SelectObject(device_context, static_cast<HGDIOBJ>(font));
+    PortableRuntime::check_exception(old_font != nullptr);
+
+    return make_scoped_font(font, device_context);
 }
 
 }

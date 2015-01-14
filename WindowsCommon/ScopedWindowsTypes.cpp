@@ -80,5 +80,25 @@ Scoped_handle make_scoped_handle(_In_ HANDLE handle)
     return std::move(Scoped_handle(handle, std::function<void (HANDLE)>(close_handle)));
 }
 
+static void select_object(_In_ HDC device_context, HGDIOBJ gdi_object) NOEXCEPT
+{
+    auto result = SelectObject(device_context, gdi_object);
+    (result);
+    assert(result != nullptr);
+}
+
+static std::function<void (HFONT)> select_object_functor(_In_ HDC device_context) NOEXCEPT
+{
+    return [=](HFONT font)
+    {
+        select_object(device_context, font);
+    };
+}
+
+Scoped_font make_scoped_font(_In_ HFONT font, _In_ HDC device_context)
+{
+    return std::move(Scoped_font(font, select_object_functor(device_context)));
+}
+
 }
 
