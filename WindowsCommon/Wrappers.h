@@ -40,7 +40,7 @@ Scoped_handle create_file(_In_ PCSTR file_name, DWORD desired_access, DWORD shar
 Scoped_handle create_event(_In_opt_ PSECURITY_ATTRIBUTES security_attributes, bool manual_reset, bool initial_state, _In_opt_ PCSTR name);
 Scoped_font select_font(_In_ HFONT font, _In_ HDC device_context);
 Scoped_font create_font_indirect(_In_ LOGFONT* log_font);
-Scoped_device_context begin_paint(_In_ HWND window, _In_ PAINTSTRUCT* paint_struct);
+Scoped_device_context begin_paint(_In_ HWND window, _Out_ PAINTSTRUCT* paint_struct);
 
 }
 
