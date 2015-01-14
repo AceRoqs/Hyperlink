@@ -10,6 +10,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestApp", "TestApp\TestApp.
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Hyperlink", "Hyperlink\Hyperlink.vcxproj", "{2A2DB128-67B2-4C9C-A7DF-77C591288BA0}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F87DF4F3-6744-4DFF-BDCF-1CB9AAA654D1} = {F87DF4F3-6744-4DFF-BDCF-1CB9AAA654D1}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PortableRuntime", "PortableRuntime\PortableRuntime.vcxproj", "{0D716D67-7339-4780-9764-F48808DB8DAE}"
 EndProject
