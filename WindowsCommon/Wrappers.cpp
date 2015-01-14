@@ -150,7 +150,7 @@ Scoped_device_context get_device_context(_In_ HWND window)
     const auto device_context = GetDC(window);
     CHECK_WITH_CUSTOM_HR(nullptr != device_context, E_FAIL);
 
-    return make_scoped_device_context(device_context, window);
+    return make_scoped_device_context(device_context, release_device_context_functor(window));
 }
 
 Scoped_handle create_file(
@@ -195,10 +195,26 @@ Scoped_handle create_event(
 
 Scoped_font select_font(_In_ HFONT font, _In_ HDC device_context)
 {
-    const auto old_font = SelectObject(device_context, static_cast<HGDIOBJ>(font));
+    const auto old_font = static_cast<HFONT>(SelectObject(device_context, static_cast<HGDIOBJ>(font)));
     PortableRuntime::check_exception(old_font != nullptr);
 
-    return make_scoped_font(font, device_context);
+    return make_scoped_font(old_font, select_object_functor(device_context));
+}
+
+Scoped_font create_font_indirect(_In_ LOGFONT* log_font)
+{
+    const HFONT font = CreateFontIndirect(log_font);
+    PortableRuntime::check_exception(font != nullptr);
+
+    return make_scoped_font(font);
+}
+
+Scoped_device_context begin_paint(_In_ HWND window, _In_ PAINTSTRUCT* paint_struct)
+{
+    const auto device_context = BeginPaint(window, paint_struct);
+    CHECK_WITH_CUSTOM_HR(nullptr != device_context, E_FAIL);
+
+    return make_scoped_device_context(device_context, end_paint_functor(window, paint_struct));
 }
 
 }

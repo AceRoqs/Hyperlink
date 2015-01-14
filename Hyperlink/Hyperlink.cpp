@@ -260,13 +260,7 @@ void Hyperlink_control::on_paint() NOEXCEPT
 {
     // NOTE: Send WM_CTLCOLORSTATIC to parent here if necessary.
     PAINTSTRUCT paint_struct;
-    const HWND window = m_window;   // Lambda cannot capture member variables.
-    std::unique_ptr<HDC__, std::function<void (HDC)>> context(
-        ::BeginPaint(window, &paint_struct),
-        [window, &paint_struct](HDC)
-        {
-            ::EndPaint(window, &paint_struct);
-        });
+    const auto context = begin_paint(m_window, &paint_struct);
 
     // Get the hyperlink color, but if it does not exist, then
     // default to the blue-ish color as default on Win7.
@@ -276,27 +270,22 @@ void Hyperlink_control::on_paint() NOEXCEPT
         color = RGB(0, 102, 204);
     }
 
-    ::SetTextColor(context.get(), color);
-    ::SetBkMode(context.get(), TRANSPARENT);
+    ::SetTextColor(context, color);
+    ::SetBkMode(context, TRANSPARENT);
 
     // Hyperlink_control uses the parent font sent via WM_SETFONT.
     HFONT current_font = m_font;
     if(nullptr == current_font)
     {
-        current_font = static_cast<HFONT>(::GetCurrentObject(context.get(), OBJ_FONT));
+        current_font = static_cast<HFONT>(::GetCurrentObject(context, OBJ_FONT));
     }
 
     LOGFONT log_font;
     ::GetObject(current_font, sizeof(log_font), &log_font);
 
     log_font.lfUnderline = TRUE;
-    std::unique_ptr<HFONT__, std::function<void (HFONT)>> underline_font(
-        ::CreateFontIndirect(&log_font),
-        [](HFONT underline_font)
-        {
-            ::DeleteObject(underline_font);
-        });
-    const auto old_font = select_font(underline_font.get(), context.get());
+    const auto underline_font = create_font_indirect(&log_font);
+    const auto old_font = select_font(underline_font, context);
 
     RECT client_rect;
     ::GetClientRect(m_window, &client_rect);
@@ -308,14 +297,14 @@ void Hyperlink_control::on_paint() NOEXCEPT
     // ExtTextOut as being a count of characters:
     // http://msdn.microsoft.com/en-us/library/dd145112%28v=vs.85%29.aspx
     // ExtTextOut is used instead of TextOut so that the text is properly clipped.
-    ::ExtTextOut(context.get(),                 // hdc
-                 client_rect.left,              // X
-                 client_rect.top,               // Y
-                 ETO_CLIPPED,                   // options
-                 &client_rect,                  // clip rectangle
-                 m_link_name.c_str(),           // string
-                 static_cast<UINT>(m_link_name.length()),   // character count
-                 nullptr);                      // distance between origins of cells
+    ::ExtTextOut(context,                                   // Device context.
+                 client_rect.left,                          // X.
+                 client_rect.top,                           // Y.
+                 ETO_CLIPPED,                               // Options.
+                 &client_rect,                              // Clip rectangle.
+                 m_link_name.c_str(),                       // String.
+                 static_cast<UINT>(m_link_name.length()),   // Character count.
+                 nullptr);                                  // Distance between origins of cells.
 }
 
 void Hyperlink_control::on_focus() NOEXCEPT
@@ -389,7 +378,7 @@ RECT Hyperlink_control::get_hit_rect(_In_ HDC device_context) NOEXCEPT
 {
     RECT hit_rect;
 
-    const auto font = select_font(m_font, device_context);
+    const auto old_font = select_font(m_font, device_context);
 
     SIZE size;
     ::GetTextExtentPoint32(device_context,
