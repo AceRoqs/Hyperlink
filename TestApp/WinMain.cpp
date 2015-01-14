@@ -39,9 +39,8 @@ int WINAPI _tWinMain(_In_ HINSTANCE instance,   // Handle to the program instanc
     // a batch file.  This means running the app was successful.
     int return_code = 0;
 
-    WindowsCommon::register_hyperlink_class(instance);
+    const auto atom = WindowsCommon::register_hyperlink_class(instance);
     INT_PTR success = ::DialogBox(instance, MAKEINTRESOURCE(IDD_DIALOG1), HWND_DESKTOP, dialog_proc);
-    WindowsCommon::unregister_hyperlink_class(instance);
 
     // If success != 1, set the ERRORLEVEL to 1, indicating an error.
     return_code = (1 == success) ? 0 : 1;

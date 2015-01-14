@@ -40,13 +40,13 @@ private:
     Hyperlink_control& operator=(const Hyperlink_control&) EQUALS_DELETE;
 
     // Required to avoid making window_proc public to all.
-    friend HRESULT register_hyperlink_class(_In_ HINSTANCE instance);
+    friend Scoped_atom register_hyperlink_class(_In_ HINSTANCE instance);
 };
 
-HRESULT register_hyperlink_class(_In_ HINSTANCE instance) NOEXCEPT
+Scoped_atom register_hyperlink_class(_In_ HINSTANCE instance) NOEXCEPT
 {
     // This window class was derived by calling GetClassInfo on a 'static' control.
-    WNDCLASSEX window_class;
+    WNDCLASSEXW window_class;
     window_class.cbSize        = sizeof(window_class);
     window_class.style         = CS_GLOBALCLASS | CS_PARENTDC | CS_DBLCLKS;
     window_class.lpfnWndProc   = Hyperlink_control::window_proc;
@@ -60,19 +60,7 @@ HRESULT register_hyperlink_class(_In_ HINSTANCE instance) NOEXCEPT
     window_class.lpszClassName = get_hyperlink_control_class();
     window_class.hIconSm       = 0;
 
-    HRESULT hr = S_OK;
-    if(!RegisterClassEx(&window_class))
-    {
-        hr = HRESULT_FROM_WIN32(::GetLastError());
-        assert(HRESULT_FROM_WIN32(ERROR_CLASS_ALREADY_EXISTS) != hr);
-    }
-
-    return hr;
-}
-
-void unregister_hyperlink_class(_In_ HINSTANCE instance) NOEXCEPT
-{
-    ::UnregisterClass(get_hyperlink_control_class(), instance);
+    return register_window_class(window_class);
 }
 
 static bool is_link_length_valid(const std::wstring& link_name) NOEXCEPT

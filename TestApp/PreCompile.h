@@ -1,5 +1,7 @@
 #pragma once
 
+#include <functional>
+
 #include <windows.h>
 #include <tchar.h>
 
