@@ -1,7 +1,7 @@
 #pragma once
 
-#include "ScopedWindowsTypes.h"
-#include "Wrappers.h"
+#include <WindowsCommon/ScopedWindowsTypes.h>
+#include <WindowsCommon/Wrappers.h>
 
 namespace WindowsCommon
 {

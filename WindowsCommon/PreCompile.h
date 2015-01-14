@@ -33,7 +33,7 @@
 // http://support.microsoft.com/kb/166474
 #define WIN32_LEAN_AND_MEAN
 
-#include <windows.h>
+#include <Windows.h>
 #include <strsafe.h>
 
 #define DIRECTINPUT_VERSION 0x0800
@@ -43,5 +43,6 @@
 
 #include <gl/GL.h>
 
+// PreCPP11.h, being a non-system header, always goes last.
 #include <PortableRuntime/PreCPP11.h>
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ScopedWindowsTypes.h"
+#include <WindowsCommon/ScopedWindowsTypes.h>
 
 namespace WindowsCommon
 {

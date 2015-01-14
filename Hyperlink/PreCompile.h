@@ -5,10 +5,11 @@
 #include <cassert>
 #include <algorithm>
 #include <functional>
-#include <windows.h>
-#include <windowsx.h>
 #include <memory>
 #include <string>
+
+#include <Windows.h>
+#include <windowsx.h>
 
 #include <PortableRuntime/PreCPP11.h>
 
