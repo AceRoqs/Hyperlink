@@ -6,7 +6,7 @@
 namespace WindowsCommon
 {
 
-PCTSTR get_hyperlink_control_class() NOEXCEPT
+PCWSTR get_hyperlink_control_class() NOEXCEPT
 {
     return HYPERLINK_CONTROL_CLASS;
 }
@@ -33,7 +33,7 @@ protected:
 private:
     HWND m_window;
     HFONT m_font;
-    std::basic_string<TCHAR> m_link_name;
+    std::wstring m_link_name;
 
     // Not implemented to prevent accidental copying.
     Hyperlink_control(const Hyperlink_control&) EQUALS_DELETE;
@@ -75,7 +75,7 @@ void unregister_hyperlink_class(_In_ HINSTANCE instance) NOEXCEPT
     ::UnregisterClass(get_hyperlink_control_class(), instance);
 }
 
-static bool is_link_length_valid(const std::basic_string<TCHAR>& link_name) NOEXCEPT
+static bool is_link_length_valid(const std::wstring& link_name) NOEXCEPT
 {
     return link_name.length() < INT_MAX;
 }
@@ -108,15 +108,15 @@ LRESULT CALLBACK Hyperlink_control::window_proc(
             {
                 std::unique_ptr<Hyperlink_control> new_control = std::make_unique<Hyperlink_control>(window);
 
-                CREATESTRUCT* create_struct = reinterpret_cast<CREATESTRUCT*>(l_param);
-                std::basic_string<TCHAR> link_name(create_struct->lpszName);
+                const CREATESTRUCT* create_struct = reinterpret_cast<CREATESTRUCT*>(l_param);
+                std::wstring link_name(create_struct->lpszName);
 
                 if(is_link_length_valid(link_name))
                 {
                     std::swap(link_name, new_control->m_link_name);
-                    ::SetWindowLongPtr(window,
-                                        GWLP_USERDATA,
-                                        reinterpret_cast<LONG_PTR>(new_control.release()));
+                    SetWindowLongPtr(window,
+                                     GWLP_USERDATA,
+                                     reinterpret_cast<LONG_PTR>(new_control.release()));
 
                     // Indicate that the window creation succeeded and that CreateWindow
                     // should NOT return a nullptr handle.
@@ -139,7 +139,7 @@ LRESULT CALLBACK Hyperlink_control::window_proc(
 
             case WM_SETTEXT:
             {
-                std::basic_string<TCHAR> link_name(reinterpret_cast<PCTSTR>(l_param));
+                std::wstring link_name(reinterpret_cast<PCWSTR>(l_param));
 
                 if(is_link_length_valid(link_name))
                 {
