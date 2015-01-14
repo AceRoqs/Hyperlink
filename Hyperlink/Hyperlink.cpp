@@ -2,7 +2,7 @@
 #include "Hyperlink.h"  // Pick up forward declarations to ensure correctness.
 #include "Hyperlink.rh"
 
-namespace HyperlinkControl
+namespace WindowsCommon
 {
 
 PCTSTR get_hyperlink_control_class()

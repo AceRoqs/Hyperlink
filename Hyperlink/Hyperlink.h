@@ -1,7 +1,6 @@
 #pragma once
 
-// TODO: The code in this namespace will eventually be merged into WindowsCommon.
-namespace HyperlinkControl
+namespace WindowsCommon
 {
 
 // Reference get_hyperlink_control_class when using CreateWindow to create
