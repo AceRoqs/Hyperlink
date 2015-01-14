@@ -44,6 +44,7 @@
     <ClInclude Include="Clock.h" />
     <ClInclude Include="CheckHR.h" />
     <ClInclude Include="FPU.h" />
+    <ClInclude Include="Hyperlink.h" />
     <ClInclude Include="InputDevice.h" />
     <ClInclude Include="PreCompile.h" />
     <ClInclude Include="ScopedWindowsTypes.h" />
@@ -54,6 +55,7 @@
     <ClInclude Include="Wrappers.h" />
     <ClCompile Include="Clock.cpp" />
     <ClCompile Include="FPU.cpp" />
+    <ClCompile Include="Hyperlink.cpp" />
     <ClCompile Include="InputDevice.cpp" />
     <ClCompile Include="ThreadAffinity.cpp" />
     <ClCompile Include="DebuggerTracing.cpp" />
@@ -65,6 +67,7 @@
     <ClCompile Include="WindowMessages.cpp" />
     <ClCompile Include="Wrappers.cpp" />
     <ClCompile Include="WindowsGL.cpp" />
+    <None Include="Hyperlink.rh" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
