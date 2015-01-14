@@ -13,10 +13,10 @@ PCTSTR get_hyperlink_control_class() NOEXCEPT
 
 class Hyperlink_control
 {
-protected:
-    Hyperlink_control(_In_ HWND window) NOEXCEPT;   // Protected to ensure heap-only creation.
-    ~Hyperlink_control() NOEXCEPT;                  // Protected to prevent external destruction.
+public:
+    Hyperlink_control(_In_ HWND window) NOEXCEPT;
 
+protected:
     static LRESULT CALLBACK window_proc(_In_ HWND window, UINT message, WPARAM w_param, LPARAM l_param) NOEXCEPT;
     void on_set_font(_In_opt_ HFONT font, BOOL redraw) NOEXCEPT;
     void on_paint() NOEXCEPT;
@@ -36,20 +36,11 @@ private:
     std::basic_string<TCHAR> m_link_name;
 
     // Not implemented to prevent accidental copying.
-    Hyperlink_control(const Hyperlink_control&);
-    Hyperlink_control& operator=(const Hyperlink_control&);
+    Hyperlink_control(const Hyperlink_control&) EQUALS_DELETE;
+    Hyperlink_control& operator=(const Hyperlink_control&) EQUALS_DELETE;
 
     // Required to avoid making window_proc public to all.
     friend HRESULT register_hyperlink_class(_In_ HINSTANCE instance);
-
-    // Required for unique_ptr access, as the destructor is protected.
-    struct deleter
-    {
-        void operator()(_In_ Hyperlink_control* control) const
-        {
-            delete control;
-        }
-    };
 };
 
 HRESULT register_hyperlink_class(_In_ HINSTANCE instance) NOEXCEPT
@@ -96,10 +87,6 @@ Hyperlink_control::Hyperlink_control(_In_ HWND window) NOEXCEPT :
     assert(INVALID_HANDLE_VALUE != window);
 }
 
-Hyperlink_control::~Hyperlink_control() NOEXCEPT
-{
-}
-
 LRESULT CALLBACK Hyperlink_control::window_proc(
     _In_ HWND window,           // Handle to the window.
     UINT message,               // Message that was sent.
@@ -119,7 +106,7 @@ LRESULT CALLBACK Hyperlink_control::window_proc(
         {
             try
             {
-                std::unique_ptr<Hyperlink_control, deleter> new_control(new Hyperlink_control(window));
+                std::unique_ptr<Hyperlink_control> new_control = std::make_unique<Hyperlink_control>(window);
 
                 CREATESTRUCT* create_struct = reinterpret_cast<CREATESTRUCT*>(l_param);
                 std::basic_string<TCHAR> link_name(create_struct->lpszName);
@@ -148,9 +135,9 @@ LRESULT CALLBACK Hyperlink_control::window_proc(
 
         case WM_NCDESTROY:
         {
+            ::SetWindowLongPtr(window, GWLP_USERDATA, 0);
             delete control;
             control = nullptr;
-            ::SetWindowLongPtr(window, GWLP_USERDATA, 0);
 
             break;
         }
