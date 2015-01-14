@@ -5,7 +5,7 @@
 namespace WindowsCommon
 {
 
-PCTSTR get_hyperlink_control_class()
+PCTSTR get_hyperlink_control_class() NOEXCEPT
 {
     return HYPERLINK_CONTROL_CLASS;
 }
@@ -13,21 +13,21 @@ PCTSTR get_hyperlink_control_class()
 class Hyperlink_control
 {
 protected:
-    Hyperlink_control(_In_ HWND window);    // Protected to ensure heap-only creation.
-    ~Hyperlink_control();                   // Protected to prevent external destruction.
+    Hyperlink_control(_In_ HWND window) NOEXCEPT;   // Protected to ensure heap-only creation.
+    ~Hyperlink_control() NOEXCEPT;                  // Protected to prevent external destruction.
 
-    static LRESULT CALLBACK window_proc(_In_ HWND window, UINT message, WPARAM w_param, LPARAM l_param);
-    void on_set_font(_In_opt_ HFONT font, BOOL redraw);
-    void on_paint();
-    void on_focus();
-    void on_mouse_move(LONG x, LONG y);
-    void on_l_button_down(LONG x, LONG y);
-    void on_l_button_up(LONG x, LONG y);
-    void on_key_down(_In_ WPARAM key);
+    static LRESULT CALLBACK window_proc(_In_ HWND window, UINT message, WPARAM w_param, LPARAM l_param) NOEXCEPT;
+    void on_set_font(_In_opt_ HFONT font, BOOL redraw) NOEXCEPT;
+    void on_paint() NOEXCEPT;
+    void on_focus() NOEXCEPT;
+    void on_mouse_move(LONG x, LONG y) NOEXCEPT;
+    void on_l_button_down(LONG x, LONG y) NOEXCEPT;
+    void on_l_button_up(LONG x, LONG y) NOEXCEPT;
+    void on_key_down(_In_ WPARAM key) NOEXCEPT;
 
-    void navigate();
-    void get_hit_rect(_In_ HDC device_context, _Out_ RECT* hit_rect);
-    bool is_in_hit_rect(LONG x, LONG y);
+    void navigate() NOEXCEPT;
+    void get_hit_rect(_In_ HDC device_context, _Out_ RECT* hit_rect) NOEXCEPT;
+    bool is_in_hit_rect(LONG x, LONG y) NOEXCEPT;
 
 private:
     HWND m_window;
@@ -51,7 +51,7 @@ private:
     };
 };
 
-HRESULT register_hyperlink_class(_In_ HINSTANCE instance)
+HRESULT register_hyperlink_class(_In_ HINSTANCE instance) NOEXCEPT
 {
     // This window class was derived by calling GetClassInfo on a 'static' control.
     WNDCLASSEX window_class;
@@ -78,31 +78,32 @@ HRESULT register_hyperlink_class(_In_ HINSTANCE instance)
     return hr;
 }
 
-void unregister_hyperlink_class(_In_ HINSTANCE instance)
+void unregister_hyperlink_class(_In_ HINSTANCE instance) NOEXCEPT
 {
     ::UnregisterClass(get_hyperlink_control_class(), instance);
 }
 
-bool is_link_length_valid(const std::basic_string<TCHAR>& link_name)
+static bool is_link_length_valid(const std::basic_string<TCHAR>& link_name) NOEXCEPT
 {
     return link_name.length() < INT_MAX;
 }
 
-Hyperlink_control::Hyperlink_control(_In_ HWND window) :
+Hyperlink_control::Hyperlink_control(_In_ HWND window) NOEXCEPT :
     m_window(window),
     m_font(nullptr)
 {
     assert(INVALID_HANDLE_VALUE != window);
 }
 
-Hyperlink_control::~Hyperlink_control()
+Hyperlink_control::~Hyperlink_control() NOEXCEPT
 {
 }
 
-LRESULT CALLBACK Hyperlink_control::window_proc(_In_ HWND window,   // Handle to the window.
-                                                UINT message,       // Message that was sent.
-                                                WPARAM w_param,     // First message parameter.
-                                                LPARAM l_param)     // Second message parameter.
+LRESULT CALLBACK Hyperlink_control::window_proc(
+    _In_ HWND window,           // Handle to the window.
+    UINT message,               // Message that was sent.
+    WPARAM w_param,             // First message parameter.
+    LPARAM l_param) NOEXCEPT    // Second message parameter.
 {
     LRESULT return_value = 0;
 
@@ -258,7 +259,7 @@ LRESULT CALLBACK Hyperlink_control::window_proc(_In_ HWND window,   // Handle to
     return return_value;
 }
 
-void Hyperlink_control::on_set_font(_In_opt_ HFONT font, BOOL redraw)
+void Hyperlink_control::on_set_font(_In_opt_ HFONT font, BOOL redraw) NOEXCEPT
 {
     m_font = font;
     if(redraw)
@@ -267,7 +268,7 @@ void Hyperlink_control::on_set_font(_In_opt_ HFONT font, BOOL redraw)
     }
 }
 
-void Hyperlink_control::on_paint()
+void Hyperlink_control::on_paint() NOEXCEPT
 {
     // NOTE: Send WM_CTLCOLORSTATIC to parent here if necessary.
     PAINTSTRUCT paint_struct;
@@ -334,7 +335,7 @@ void Hyperlink_control::on_paint()
                  nullptr);                      // distance between origins of cells
 }
 
-void Hyperlink_control::on_focus()
+void Hyperlink_control::on_focus() NOEXCEPT
 {
     const HWND window = m_window;   // Lambda cannot capture member variables.
     std::unique_ptr<HDC__, std::function<void (HDC)>> device_context(
@@ -352,7 +353,7 @@ void Hyperlink_control::on_focus()
     ::DrawFocusRect(device_context.get(), &hit_rect);
 }
 
-void Hyperlink_control::on_mouse_move(LONG x, LONG y)
+void Hyperlink_control::on_mouse_move(LONG x, LONG y) NOEXCEPT
 {
     if(is_in_hit_rect(x, y))
     {
@@ -362,7 +363,7 @@ void Hyperlink_control::on_mouse_move(LONG x, LONG y)
     }
 }
 
-void Hyperlink_control::on_l_button_down(LONG x, LONG y)
+void Hyperlink_control::on_l_button_down(LONG x, LONG y) NOEXCEPT
 {
     if(is_in_hit_rect(x, y))
     {
@@ -371,7 +372,7 @@ void Hyperlink_control::on_l_button_down(LONG x, LONG y)
     }
 }
 
-void Hyperlink_control::on_l_button_up(LONG x, LONG y)
+void Hyperlink_control::on_l_button_up(LONG x, LONG y) NOEXCEPT
 {
     // Only navigate when the mouse is captured to prevent navigation
     // from happening when the button is pressed outside the hit box,
@@ -387,7 +388,7 @@ void Hyperlink_control::on_l_button_up(LONG x, LONG y)
     }
 }
 
-void Hyperlink_control::on_key_down(_In_ WPARAM key)
+void Hyperlink_control::on_key_down(_In_ WPARAM key) NOEXCEPT
 {
     if((VK_SPACE == key) || (VK_RETURN == key))
     {
@@ -395,7 +396,7 @@ void Hyperlink_control::on_key_down(_In_ WPARAM key)
     }
 }
 
-void Hyperlink_control::navigate()
+void Hyperlink_control::navigate() NOEXCEPT
 {
     // The August 1997 WDJ describes an implementation of GotoURL that
     // attempts to call WinExec() if ShellExecute() fails.  Use the simple
@@ -409,7 +410,7 @@ void Hyperlink_control::navigate()
                    SW_SHOWNORMAL);      // nShowCmd
 }
 
-void Hyperlink_control::get_hit_rect(_In_ HDC device_context, _Out_ RECT* hit_rect)
+void Hyperlink_control::get_hit_rect(_In_ HDC device_context, _Out_ RECT* hit_rect) NOEXCEPT
 {
     std::unique_ptr<HFONT__, std::function<void (HFONT)>> font(
         SelectFont(device_context, m_font),
@@ -430,7 +431,7 @@ void Hyperlink_control::get_hit_rect(_In_ HDC device_context, _Out_ RECT* hit_re
     hit_rect->bottom = min(hit_rect->bottom, hit_rect->top + size.cy);
 }
 
-bool Hyperlink_control::is_in_hit_rect(LONG x, LONG y)
+bool Hyperlink_control::is_in_hit_rect(LONG x, LONG y) NOEXCEPT
 {
     bool is_in_hit_rect = false;
 

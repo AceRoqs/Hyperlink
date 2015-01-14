@@ -7,3 +7,5 @@
 #include <memory>
 #include <string>
 
+#include <PortableRuntime/PreCPP11.h>
+
