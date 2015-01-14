@@ -10,7 +10,6 @@ PCTSTR get_hyperlink_control_class()
     return HYPERLINK_CONTROL_CLASS;
 }
 
-//---------------------------------------------------------------------------
 class Hyperlink_control
 {
 protected:
@@ -52,7 +51,6 @@ private:
     };
 };
 
-//---------------------------------------------------------------------------
 HRESULT register_hyperlink_class(_In_ HINSTANCE instance)
 {
     // This window class was derived by calling GetClassInfo on a 'static' control.
@@ -80,19 +78,16 @@ HRESULT register_hyperlink_class(_In_ HINSTANCE instance)
     return hr;
 }
 
-//---------------------------------------------------------------------------
 void unregister_hyperlink_class(_In_ HINSTANCE instance)
 {
     ::UnregisterClass(get_hyperlink_control_class(), instance);
 }
 
-//---------------------------------------------------------------------------
 bool is_link_length_valid(const std::basic_string<TCHAR>& link_name)
 {
     return link_name.length() < INT_MAX;
 }
 
-//---------------------------------------------------------------------------
 Hyperlink_control::Hyperlink_control(_In_ HWND window) :
     m_window(window),
     m_font(nullptr)
@@ -100,12 +95,10 @@ Hyperlink_control::Hyperlink_control(_In_ HWND window) :
     assert(INVALID_HANDLE_VALUE != window);
 }
 
-//---------------------------------------------------------------------------
 Hyperlink_control::~Hyperlink_control()
 {
 }
 
-//---------------------------------------------------------------------------
 LRESULT CALLBACK Hyperlink_control::window_proc(_In_ HWND window,   // Handle to the window.
                                                 UINT message,       // Message that was sent.
                                                 WPARAM w_param,     // First message parameter.
@@ -265,7 +258,6 @@ LRESULT CALLBACK Hyperlink_control::window_proc(_In_ HWND window,   // Handle to
     return return_value;
 }
 
-//---------------------------------------------------------------------------
 void Hyperlink_control::on_set_font(_In_opt_ HFONT font, BOOL redraw)
 {
     m_font = font;
@@ -275,7 +267,6 @@ void Hyperlink_control::on_set_font(_In_opt_ HFONT font, BOOL redraw)
     }
 }
 
-//---------------------------------------------------------------------------
 void Hyperlink_control::on_paint()
 {
     // NOTE: Send WM_CTLCOLORSTATIC to parent here if necessary.
@@ -343,7 +334,6 @@ void Hyperlink_control::on_paint()
                  nullptr);                      // distance between origins of cells
 }
 
-//---------------------------------------------------------------------------
 void Hyperlink_control::on_focus()
 {
     const HWND window = m_window;   // Lambda cannot capture member variables.
@@ -362,7 +352,6 @@ void Hyperlink_control::on_focus()
     ::DrawFocusRect(device_context.get(), &hit_rect);
 }
 
-//---------------------------------------------------------------------------
 void Hyperlink_control::on_mouse_move(LONG x, LONG y)
 {
     if(is_in_hit_rect(x, y))
@@ -373,7 +362,6 @@ void Hyperlink_control::on_mouse_move(LONG x, LONG y)
     }
 }
 
-//---------------------------------------------------------------------------
 void Hyperlink_control::on_l_button_down(LONG x, LONG y)
 {
     if(is_in_hit_rect(x, y))
@@ -383,7 +371,6 @@ void Hyperlink_control::on_l_button_down(LONG x, LONG y)
     }
 }
 
-//---------------------------------------------------------------------------
 void Hyperlink_control::on_l_button_up(LONG x, LONG y)
 {
     // Only navigate when the mouse is captured to prevent navigation
@@ -400,7 +387,6 @@ void Hyperlink_control::on_l_button_up(LONG x, LONG y)
     }
 }
 
-//---------------------------------------------------------------------------
 void Hyperlink_control::on_key_down(_In_ WPARAM key)
 {
     if((VK_SPACE == key) || (VK_RETURN == key))
@@ -409,7 +395,6 @@ void Hyperlink_control::on_key_down(_In_ WPARAM key)
     }
 }
 
-//---------------------------------------------------------------------------
 void Hyperlink_control::navigate()
 {
     // The August 1997 WDJ describes an implementation of GotoURL that
@@ -424,7 +409,6 @@ void Hyperlink_control::navigate()
                    SW_SHOWNORMAL);      // nShowCmd
 }
 
-//---------------------------------------------------------------------------
 void Hyperlink_control::get_hit_rect(_In_ HDC device_context, _Out_ RECT* hit_rect)
 {
     std::unique_ptr<HFONT__, std::function<void (HFONT)>> font(
@@ -446,7 +430,6 @@ void Hyperlink_control::get_hit_rect(_In_ HDC device_context, _Out_ RECT* hit_re
     hit_rect->bottom = min(hit_rect->bottom, hit_rect->top + size.cy);
 }
 
-//---------------------------------------------------------------------------
 bool Hyperlink_control::is_in_hit_rect(LONG x, LONG y)
 {
     bool is_in_hit_rect = false;
