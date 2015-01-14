@@ -152,49 +152,6 @@ Scoped_device_context get_device_context(_In_ HWND window)
     return make_scoped_device_context(device_context, window);
 }
 
-Scoped_gl_context create_gl_context(_In_ HDC device_context)
-{
-    const PIXELFORMATDESCRIPTOR descriptor =
-    {
-        sizeof(PIXELFORMATDESCRIPTOR),      // Size of this descriptor.
-        1,                                  // Version number.
-        PFD_DRAW_TO_WINDOW |                // Support window.
-        PFD_SUPPORT_OPENGL |                // Support OpenGL.
-        PFD_GENERIC_ACCELERATED |           // Support hardware acceleration.
-        PFD_DOUBLEBUFFER,                   // Double buffered.
-        PFD_TYPE_RGBA,                      // RGBA type.
-        32,                                 // 32-bit color depth.
-        0, 0, 0, 0, 0, 0,                   // Color bits ignored.
-        0,                                  // No alpha buffer.
-        0,                                  // Shift bit ignored.
-        0,                                  // No accumulation buffer.
-        0, 0, 0, 0,                         // Accum bits ignored.
-        24,                                 // 24-bit z-buffer.
-        8,                                  // 8-bit stencil buffer.
-        0,                                  // No auxiliary buffer.
-        PFD_MAIN_PLANE,                     // Main layer.
-        0,                                  // Reserved.
-        0, 0, 0                             // Layer masks ignored.
-    };
-
-    const int pixel_format = ChoosePixelFormat(device_context, &descriptor);
-    check_windows_error(pixel_format != 0);
-
-    check_windows_error(SetPixelFormat(device_context, pixel_format, &descriptor));
-
-    const auto rendering_context = wglCreateContext(device_context);
-    CHECK_WINDOWS_ERROR(nullptr != rendering_context);
-
-    return make_scoped_gl_context(rendering_context);
-}
-
-Scoped_current_context create_current_context(_In_ HDC device_context, _In_ HGLRC gl_context)
-{
-    check_windows_error(wglMakeCurrent(device_context, gl_context));
-
-    return make_scoped_current_context(gl_context);
-}
-
 Scoped_handle create_file(
     _In_ PCSTR file_name,
     DWORD desired_access,

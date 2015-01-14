@@ -65,40 +65,6 @@ Scoped_device_context make_scoped_device_context(_In_ HDC device_context, _In_ H
     return std::move(Scoped_device_context(device_context, release_device_context_functor(window)));
 }
 
-static void delete_gl_context(_In_ HGLRC gl_context) NOEXCEPT
-{
-    if(!wglDeleteContext(gl_context))
-    {
-        auto hr = hresult_from_last_error();
-        (hr);
-        assert(SUCCEEDED(hr));
-    }
-}
-
-Scoped_gl_context make_scoped_gl_context(_In_ HGLRC gl_context)
-{
-    return std::move(Scoped_gl_context(gl_context, std::function<void (HGLRC)>(delete_gl_context)));
-}
-
-static void clear_gl_context(_In_opt_ HGLRC gl_context) NOEXCEPT
-{
-    UNREFERENCED_PARAMETER(gl_context);
-
-    if(!wglMakeCurrent(nullptr, nullptr))
-    {
-        HRESULT hr = hresult_from_last_error();
-        (hr);
-        assert(SUCCEEDED(hr));
-    }
-}
-
-Scoped_current_context make_scoped_current_context(_In_ HGLRC gl_context)
-{
-    // TODO: I can't think of a better way than to pass a gl_context, even though it is unused.
-    // A non-null variable is required for the deleter to be part of move construction.
-    return std::move(Scoped_current_context(gl_context, std::function<void (HGLRC)>(clear_gl_context)));
-}
-
 static void close_handle(_In_ HANDLE handle) NOEXCEPT
 {
     if(!CloseHandle(handle))

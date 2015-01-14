@@ -35,8 +35,6 @@ Scoped_window create_window(_In_opt_ PCSTR class_name, _In_opt_ PCSTR window_nam
     int width, int height, _In_opt_ HWND parent, _In_opt_ HMENU menu, _In_opt_ HINSTANCE instance, _In_opt_ PVOID param);
 Scoped_window create_normal_window(_In_ PCSTR class_name, _In_ PCSTR window_name, int width, int height, _In_opt_ HINSTANCE instance, _In_opt_ PVOID param);
 Scoped_device_context get_device_context(_In_ HWND window);
-Scoped_gl_context create_gl_context(_In_ HDC device_context);
-Scoped_current_context create_current_context(_In_ HDC device_context, _In_ HGLRC gl_context);
 Scoped_handle create_file(_In_ PCSTR file_name, DWORD desired_access, DWORD share_mode,
     _In_opt_ PSECURITY_ATTRIBUTES security_attributes, DWORD creation_disposition, DWORD flags, _In_opt_ HANDLE template_file);
 Scoped_handle create_event(_In_opt_ PSECURITY_ATTRIBUTES security_attributes, bool manual_reset, bool initial_state, _In_opt_ PCSTR name);

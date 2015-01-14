@@ -77,15 +77,11 @@ public:
 typedef Scoped_resource<ATOM> Scoped_atom;
 typedef Scoped_resource<HWND> Scoped_window;
 typedef Scoped_resource<HDC> Scoped_device_context;
-typedef Scoped_resource<HGLRC> Scoped_gl_context;
-typedef Scoped_resource<HGLRC> Scoped_current_context;
 typedef Scoped_resource<HANDLE> Scoped_handle;
 
 Scoped_atom make_scoped_window_class(_In_ ATOM atom, _In_ HINSTANCE instance);
 Scoped_window make_scoped_window(_In_ HWND window);
 Scoped_device_context make_scoped_device_context(_In_ HDC device_context, _In_ HWND window);
-Scoped_gl_context make_scoped_gl_context(_In_ HGLRC gl_context);
-Scoped_current_context make_scoped_current_context(_In_ HGLRC gl_context);
 Scoped_handle make_scoped_handle(_In_ HANDLE handle);
 
 }

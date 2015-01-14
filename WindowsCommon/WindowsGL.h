@@ -6,6 +6,9 @@
 namespace WindowsCommon
 {
 
+typedef Scoped_resource<HGLRC> Scoped_gl_context;
+typedef Scoped_resource<HGLRC> Scoped_current_context;
+
 struct WGL_state
 {
 // http://stackoverflow.com/questions/70013/how-to-detect-if-im-compiling-code-with-visual-studio-2008
@@ -41,6 +44,11 @@ protected:
 private:
     bool m_windowed;
 };
+
+Scoped_gl_context create_gl_context(_In_ HDC device_context);
+Scoped_current_context create_current_context(_In_ HDC device_context, _In_ HGLRC gl_context);
+Scoped_gl_context make_scoped_gl_context(_In_ HGLRC gl_context);
+Scoped_current_context make_scoped_current_context(_In_ HGLRC gl_context);
 
 }
 
