@@ -54,7 +54,7 @@ Scoped_atom register_hyperlink_class(_In_ HINSTANCE instance) NOEXCEPT
     window_class.cbWndExtra    = 0;
     window_class.hInstance     = instance;
     window_class.hIcon         = nullptr;
-    window_class.hCursor       = ::LoadCursor(nullptr, IDC_ARROW);
+    window_class.hCursor       = LoadCursorW(nullptr, IDC_ARROW);
     window_class.hbrBackground = nullptr;
     window_class.lpszMenuName  = nullptr;
     window_class.lpszClassName = get_hyperlink_control_class();
@@ -85,7 +85,7 @@ LRESULT CALLBACK Hyperlink_control::window_proc(
 
     // GetWindowLongPtr should never fail.
     // control is not valid until WM_NCCREATE has been sent.
-    Hyperlink_control* control = reinterpret_cast<Hyperlink_control*>(::GetWindowLongPtr(window, GWLP_USERDATA));
+    Hyperlink_control* control = reinterpret_cast<Hyperlink_control*>(GetWindowLongPtrW(window, GWLP_USERDATA));
 
     try
     {
@@ -102,9 +102,9 @@ LRESULT CALLBACK Hyperlink_control::window_proc(
                 if(is_link_length_valid(link_name))
                 {
                     std::swap(link_name, new_control->m_link_name);
-                    SetWindowLongPtr(window,
-                                     GWLP_USERDATA,
-                                     reinterpret_cast<LONG_PTR>(new_control.release()));
+                    SetWindowLongPtrW(window,
+                                      GWLP_USERDATA,
+                                      reinterpret_cast<LONG_PTR>(new_control.release()));
 
                     // Indicate that the window creation succeeded and that CreateWindow
                     // should NOT return a nullptr handle.
@@ -118,7 +118,7 @@ LRESULT CALLBACK Hyperlink_control::window_proc(
 
             case WM_NCDESTROY:
             {
-                ::SetWindowLongPtr(window, GWLP_USERDATA, 0);
+                SetWindowLongPtrW(window, GWLP_USERDATA, 0);
                 delete control;
                 control = nullptr;
 
@@ -133,7 +133,7 @@ LRESULT CALLBACK Hyperlink_control::window_proc(
                 {
                     // Ensure that setting the title text of the control and saving the
                     // text in a member variable is atomic.
-                    return_value = ::DefWindowProc(window, message, w_param, l_param);
+                    return_value = DefWindowProcW(window, message, w_param, l_param);
                     if(return_value)
                     {
                         std::swap(link_name, control->m_link_name);
@@ -190,7 +190,7 @@ LRESULT CALLBACK Hyperlink_control::window_proc(
 
             case WM_GETDLGCODE:
             {
-                return_value = ::DefWindowProc(window, message, w_param, l_param);
+                return_value = DefWindowProcW(window, message, w_param, l_param);
 
                 // By default, the dialog box will send VK_RETURN to the default control.
                 // This can be handled by the owner window (http://support.microsoft.com/kb/102589),
@@ -215,7 +215,7 @@ LRESULT CALLBACK Hyperlink_control::window_proc(
 
             default:
             {
-                return_value = ::DefWindowProc(window, message, w_param, l_param);
+                return_value = DefWindowProcW(window, message, w_param, l_param);
                 break;
             }
         }
@@ -233,7 +233,7 @@ void Hyperlink_control::on_set_font(_In_opt_ HFONT font, BOOL redraw) NOEXCEPT
     m_font = font;
     if(redraw)
     {
-        ::InvalidateRect(m_window, nullptr, TRUE);
+        InvalidateRect(m_window, nullptr, TRUE);
     }
 }
 
@@ -245,31 +245,31 @@ void Hyperlink_control::on_paint() NOEXCEPT
 
     // Get the hyperlink color, but if it does not exist, then
     // default to the blue-ish color as default on Win7.
-    DWORD color = ::GetSysColor(COLOR_HOTLIGHT);
-    if(nullptr == ::GetSysColorBrush(COLOR_HOTLIGHT))
+    DWORD color = GetSysColor(COLOR_HOTLIGHT);
+    if(nullptr == GetSysColorBrush(COLOR_HOTLIGHT))
     {
         color = RGB(0, 102, 204);
     }
 
-    ::SetTextColor(context, color);
-    ::SetBkMode(context, TRANSPARENT);
+    SetTextColor(context, color);
+    SetBkMode(context, TRANSPARENT);
 
     // Hyperlink_control uses the parent font sent via WM_SETFONT.
     HFONT current_font = m_font;
     if(nullptr == current_font)
     {
-        current_font = static_cast<HFONT>(::GetCurrentObject(context, OBJ_FONT));
+        current_font = static_cast<HFONT>(GetCurrentObject(context, OBJ_FONT));
     }
 
     LOGFONT log_font;
-    ::GetObject(current_font, sizeof(log_font), &log_font);
+    GetObjectW(current_font, sizeof(log_font), &log_font);
 
     log_font.lfUnderline = TRUE;
     const auto underline_font = create_font_indirect(&log_font);
     const auto old_font = select_font(underline_font, context);
 
     RECT client_rect;
-    ::GetClientRect(m_window, &client_rect);
+    GetClientRect(m_window, &client_rect);
 
     // ExtTextOut documentation specifies the character count as cbCount,
     // which implies count of bytes.
@@ -278,14 +278,14 @@ void Hyperlink_control::on_paint() NOEXCEPT
     // ExtTextOut as being a count of characters:
     // http://msdn.microsoft.com/en-us/library/dd145112%28v=vs.85%29.aspx
     // ExtTextOut is used instead of TextOut so that the text is properly clipped.
-    ::ExtTextOut(context,                                   // Device context.
-                 client_rect.left,                          // X.
-                 client_rect.top,                           // Y.
-                 ETO_CLIPPED,                               // Options.
-                 &client_rect,                              // Clip rectangle.
-                 m_link_name.c_str(),                       // String.
-                 static_cast<UINT>(m_link_name.length()),   // Character count.
-                 nullptr);                                  // Distance between origins of cells.
+    ExtTextOutW(context,                                    // Device context.
+                client_rect.left,                           // X.
+                client_rect.top,                            // Y.
+                ETO_CLIPPED,                                // Options.
+                &client_rect,                               // Clip rectangle.
+                m_link_name.c_str(),                        // String.
+                static_cast<UINT>(m_link_name.length()),    // Character count.
+                nullptr);                                   // Distance between origins of cells.
 }
 
 void Hyperlink_control::on_focus() NOEXCEPT
@@ -295,7 +295,7 @@ void Hyperlink_control::on_focus() NOEXCEPT
 
     // DrawFocusRect is an XOR operation, so the same call is used
     // for set focus and remove focus.
-    ::DrawFocusRect(device_context, &hit_rect);
+    DrawFocusRect(device_context, &hit_rect);
 }
 
 void Hyperlink_control::on_mouse_move(LONG x, LONG y) NOEXCEPT
@@ -304,7 +304,7 @@ void Hyperlink_control::on_mouse_move(LONG x, LONG y) NOEXCEPT
     {
         // hInstance must be nullptr in order to use a predefined cursor.
         // NOTE: IDC_HAND is only available starting on Windows 2000.
-        ::SetCursor(::LoadCursor(nullptr, IDC_HAND));
+        SetCursor(LoadCursorW(nullptr, IDC_HAND));
     }
 }
 
@@ -312,8 +312,8 @@ void Hyperlink_control::on_l_button_down(LONG x, LONG y) NOEXCEPT
 {
     if(is_in_hit_rect(x, y))
     {
-        ::SetFocus(m_window);
-        ::SetCapture(m_window);
+        SetFocus(m_window);
+        SetCapture(m_window);
     }
 }
 
@@ -322,9 +322,9 @@ void Hyperlink_control::on_l_button_up(LONG x, LONG y) NOEXCEPT
     // Only navigate when the mouse is captured to prevent navigation
     // from happening when the button is pressed outside the hit box,
     // but released inside the hit box.
-    if(::GetCapture() == m_window)
+    if(GetCapture() == m_window)
     {
-        ::ReleaseCapture();
+        ReleaseCapture();
 
         if(is_in_hit_rect(x, y))
         {
@@ -347,12 +347,12 @@ void Hyperlink_control::navigate() NOEXCEPT
     // attempts to call WinExec() if ShellExecute() fails.  Use the simple
     // version until a modern browser is discovered where it doesn't work.
     // http://www.drdobbs.com/184416463
-    ::ShellExecute(m_window,            // hwnd
-                   TEXT("open"),        // lpOperation
-                   m_link_name.c_str(), // lpFile
-                   nullptr,             // lpParameters
-                   nullptr,             // lpDirectory
-                   SW_SHOWNORMAL);      // nShowCmd
+    ShellExecute(m_window,              // Window.
+                 L"open",               // Operation.
+                 m_link_name.c_str(),   // File;
+                 nullptr,               // Parameters.
+                 nullptr,               // Directory.
+                 SW_SHOWNORMAL);        // Show command.
 }
 
 RECT Hyperlink_control::get_hit_rect(_In_ HDC device_context) NOEXCEPT
@@ -362,13 +362,13 @@ RECT Hyperlink_control::get_hit_rect(_In_ HDC device_context) NOEXCEPT
     const auto old_font = select_font(m_font, device_context);
 
     SIZE size;
-    ::GetTextExtentPoint32(device_context,
-                           m_link_name.c_str(),
-                           static_cast<int>(m_link_name.length()),
-                           &size);
+    GetTextExtentPoint32W(device_context,
+                          m_link_name.c_str(),
+                          static_cast<int>(m_link_name.length()),
+                          &size);
 
     // Clip the text extents to the client rectangle.
-    ::GetClientRect(m_window, &hit_rect);
+    GetClientRect(m_window, &hit_rect);
     hit_rect.right = std::min(hit_rect.right, hit_rect.left + size.cx);
     hit_rect.bottom = std::min(hit_rect.bottom, hit_rect.top + size.cy);
 
@@ -383,7 +383,7 @@ bool Hyperlink_control::is_in_hit_rect(LONG x, LONG y) NOEXCEPT
     const RECT hit_rect = get_hit_rect(device_context);
 
     const POINT mouse_point = {x, y};
-    if(::PtInRect(&hit_rect, mouse_point))
+    if(PtInRect(&hit_rect, mouse_point))
     {
         is_in_hit_rect = true;
     }
