@@ -20,7 +20,7 @@
   </PropertyGroup>
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros">
-    <PropertySheetsDir>$(SolutionDir)PropertySheets\</PropertySheetsDir>
+    <ConfigurationsDir>$(SolutionDir)Configurations\</ConfigurationsDir>
   </PropertyGroup>
   <PropertyGroup />
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
