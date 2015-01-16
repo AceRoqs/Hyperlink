@@ -26,7 +26,7 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <Import Project="$(SolutionDir)PropertySheets\Project.Default.props" />
+  <Import Project="$(SolutionDir)Configurations\Project.Default.props" />
   <PropertyGroup Label="Globals">
     <ProjectGuid>{0D716D67-7339-4780-9764-F48808DB8DAE}</ProjectGuid>
     <RootNamespace>PortableRuntime</RootNamespace>
@@ -38,9 +38,9 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings" />
   <ImportGroup Label="PropertySheets">
-    <Import Project="$(PropertySheetsDir)Project2.Default.props" />
-    <Import Project="$(PropertySheetsDir)CRTWarnings.Disable.props" />
-    <Import Project="$(PropertySheetsDir)PortableRuntime.props" />
+    <Import Project="$(ConfigurationsDir)Project2.Default.props" />
+    <Import Project="$(ConfigurationsDir)CRTWarnings.Disable.props" />
+    <Import Project="$(ConfigurationsDir)PortableRuntime.props" />
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
