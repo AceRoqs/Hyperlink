@@ -19,16 +19,16 @@ public:
 protected:
     static LRESULT CALLBACK window_proc(_In_ HWND window, UINT message, WPARAM w_param, LPARAM l_param) NOEXCEPT;
     void on_set_font(_In_opt_ HFONT font, BOOL redraw) NOEXCEPT;
-    void on_paint() NOEXCEPT;
-    void on_focus() NOEXCEPT;
-    void on_mouse_move(LONG x, LONG y) NOEXCEPT;
-    void on_l_button_down(LONG x, LONG y) NOEXCEPT;
-    void on_l_button_up(LONG x, LONG y) NOEXCEPT;
+    void on_paint();
+    void on_focus();
+    void on_mouse_move(LONG x, LONG y);
+    void on_l_button_down(LONG x, LONG y);
+    void on_l_button_up(LONG x, LONG y);
     void on_key_down(_In_ WPARAM key) NOEXCEPT;
 
     void navigate() NOEXCEPT;
-    RECT get_hit_rect(_In_ HDC device_context) NOEXCEPT;
-    bool is_in_hit_rect(LONG x, LONG y) NOEXCEPT;
+    RECT get_hit_rect(_In_ HDC device_context);
+    bool is_in_hit_rect(LONG x, LONG y);
 
 private:
     HWND m_window;
@@ -43,7 +43,7 @@ private:
     friend Scoped_atom register_hyperlink_class(_In_ HINSTANCE instance);
 };
 
-Scoped_atom register_hyperlink_class(_In_ HINSTANCE instance) NOEXCEPT
+Scoped_atom register_hyperlink_class(_In_ HINSTANCE instance)
 {
     // This window class was derived by calling GetClassInfo on a 'static' control.
     WNDCLASSEXW window_class;
@@ -237,7 +237,7 @@ void Hyperlink_control::on_set_font(_In_opt_ HFONT font, BOOL redraw) NOEXCEPT
     }
 }
 
-void Hyperlink_control::on_paint() NOEXCEPT
+void Hyperlink_control::on_paint()
 {
     // NOTE: Send WM_CTLCOLORSTATIC to parent here if necessary.
     PAINTSTRUCT paint_struct;
@@ -288,7 +288,7 @@ void Hyperlink_control::on_paint() NOEXCEPT
                 nullptr);                                   // Distance between origins of cells.
 }
 
-void Hyperlink_control::on_focus() NOEXCEPT
+void Hyperlink_control::on_focus()
 {
     const auto device_context = get_device_context(m_window);
     const RECT hit_rect = get_hit_rect(device_context);
@@ -298,7 +298,7 @@ void Hyperlink_control::on_focus() NOEXCEPT
     DrawFocusRect(device_context, &hit_rect);
 }
 
-void Hyperlink_control::on_mouse_move(LONG x, LONG y) NOEXCEPT
+void Hyperlink_control::on_mouse_move(LONG x, LONG y)
 {
     if(is_in_hit_rect(x, y))
     {
@@ -308,7 +308,7 @@ void Hyperlink_control::on_mouse_move(LONG x, LONG y) NOEXCEPT
     }
 }
 
-void Hyperlink_control::on_l_button_down(LONG x, LONG y) NOEXCEPT
+void Hyperlink_control::on_l_button_down(LONG x, LONG y)
 {
     if(is_in_hit_rect(x, y))
     {
@@ -317,7 +317,7 @@ void Hyperlink_control::on_l_button_down(LONG x, LONG y) NOEXCEPT
     }
 }
 
-void Hyperlink_control::on_l_button_up(LONG x, LONG y) NOEXCEPT
+void Hyperlink_control::on_l_button_up(LONG x, LONG y)
 {
     // Only navigate when the mouse is captured to prevent navigation
     // from happening when the button is pressed outside the hit box,
@@ -349,13 +349,13 @@ void Hyperlink_control::navigate() NOEXCEPT
     // http://www.drdobbs.com/184416463
     ShellExecute(m_window,              // Window.
                  L"open",               // Operation.
-                 m_link_name.c_str(),   // File;
+                 m_link_name.c_str(),   // File.
                  nullptr,               // Parameters.
                  nullptr,               // Directory.
                  SW_SHOWNORMAL);        // Show command.
 }
 
-RECT Hyperlink_control::get_hit_rect(_In_ HDC device_context) NOEXCEPT
+RECT Hyperlink_control::get_hit_rect(_In_ HDC device_context)
 {
     RECT hit_rect;
 
@@ -375,7 +375,7 @@ RECT Hyperlink_control::get_hit_rect(_In_ HDC device_context) NOEXCEPT
     return hit_rect;
 }
 
-bool Hyperlink_control::is_in_hit_rect(LONG x, LONG y) NOEXCEPT
+bool Hyperlink_control::is_in_hit_rect(LONG x, LONG y)
 {
     bool is_in_hit_rect = false;
 
