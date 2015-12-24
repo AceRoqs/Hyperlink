@@ -9,7 +9,7 @@
 namespace WindowsCommon
 {
 
-LRESULT CALLBACK Window_procedure::static_window_proc(__in HWND window, UINT message, WPARAM w_param, LPARAM l_param) NOEXCEPT
+LRESULT CALLBACK Window_procedure::static_window_proc(__in HWND window, UINT message, WPARAM w_param, LPARAM l_param) noexcept
 {
     PortableRuntime::dprintf("%s\n", string_from_window_message(message));
 
@@ -20,21 +20,21 @@ LRESULT CALLBACK Window_procedure::static_window_proc(__in HWND window, UINT mes
 
         // This function should never fail.
         const auto app = reinterpret_cast<Window_procedure*>(create_struct->lpCreateParams);
-        SetWindowLongPtr(window, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(app));
+        SetWindowLongPtrW(window, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(app));
     }
 
     LRESULT return_value;
 
     // GetWindowLongPtr should never fail.
     // The variable 'app' is not valid until WM_NCCREATE has been sent.
-    const auto app = reinterpret_cast<Window_procedure*>(GetWindowLongPtr(window, GWLP_USERDATA));
+    const auto app = reinterpret_cast<Window_procedure*>(GetWindowLongPtrW(window, GWLP_USERDATA));
     if(app != nullptr)
     {
         return_value = app->window_proc(window, message, w_param, l_param);
     }
     else
     {
-        return_value = DefWindowProc(window, message, w_param, l_param);
+        return_value = DefWindowProcW(window, message, w_param, l_param);
     }
 
     return return_value;
@@ -59,7 +59,7 @@ Window_class::Window_class(UINT style, _In_ WNDPROC window_proc, int class_extra
     m_window_class.hIconSm       = small_icon;
 }
 
-Window_class::Window_class(const Window_class&& other) NOEXCEPT :
+Window_class::Window_class(const Window_class&& other) noexcept :
     m_window_class(other.m_window_class),
     m_menu_name(std::move(other.m_menu_name)),
     m_class_name(std::move(other.m_class_name))
@@ -68,12 +68,12 @@ Window_class::Window_class(const Window_class&& other) NOEXCEPT :
     m_window_class.lpszClassName = m_class_name.c_str();
 }
 
-Window_class::operator const WNDCLASSEXW&() const NOEXCEPT
+Window_class::operator const WNDCLASSEXW&() const noexcept
 {
     return m_window_class;
 }
 
-Window_class get_default_blank_window_class(_In_ HINSTANCE instance, _In_ WNDPROC window_proc, _In_ PCSTR window_class_name) NOEXCEPT
+Window_class get_default_blank_window_class(_In_ HINSTANCE instance, _In_ WNDPROC window_proc, _In_ PCSTR window_class_name) noexcept
 {
     Window_class window_class(CS_HREDRAW | CS_VREDRAW,
                               window_proc,
@@ -81,7 +81,7 @@ Window_class get_default_blank_window_class(_In_ HINSTANCE instance, _In_ WNDPRO
                               0,
                               instance,
                               nullptr,
-                              LoadCursor(nullptr, IDC_ARROW),
+                              LoadCursorW(nullptr, IDC_ARROW),
                               nullptr,
                               nullptr,
                               window_class_name,
@@ -203,7 +203,7 @@ Scoped_font select_font(_In_ HFONT font, _In_ HDC device_context)
 
 Scoped_font create_font_indirect(_In_ LOGFONT* log_font)
 {
-    const HFONT font = CreateFontIndirect(log_font);
+    const HFONT font = CreateFontIndirectW(log_font);
     CHECK_WITH_CUSTOM_HR(font != nullptr, E_FAIL);
 
     return make_scoped_font(font);

@@ -82,38 +82,6 @@ static bool is_window_32bits_per_pixel(_In_ HWND window)
     return true;
 }
 
-#if _MSC_VER <= 1800
-WGL_state::WGL_state()
-{
-}
-
-WGL_state::WGL_state(WGL_state&& other) :
-    atom(std::move(other.atom)),
-    window(std::move(other.window)),
-    device_context(std::move(other.device_context)),
-    gl_context(std::move(other.gl_context)),
-    make_current_context(std::move(other.make_current_context))
-{
-}
-
-WGL_state& WGL_state::operator=(WGL_state&& other) NOEXCEPT
-{
-    // Handle A=A case.
-    if(this != &other)
-    {
-        atom = std::move(other.atom);
-        window = std::move(other.window);
-        device_context = std::move(other.device_context);
-        gl_context = std::move(other.gl_context);
-        make_current_context = std::move(other.make_current_context);
-    }
-
-    return *this;
-}
-#else
-#error This compiler may autodefine the default move constructor.
-#endif
-
 // TODO: set window width/height if full screen
 OpenGL_window::OpenGL_window(_In_ PCSTR window_title, _In_ HINSTANCE instance, bool windowed) : m_windowed(windowed)
 {
@@ -130,17 +98,16 @@ OpenGL_window::OpenGL_window(_In_ PCSTR window_title, _In_ HINSTANCE instance, b
     }
     else
     {
-        DEVMODE DevMode;
-        ZeroMemory(&DevMode, sizeof(DEVMODE));
+        DEVMODEW DevMode = {};
         DevMode.dmSize = sizeof(DEVMODE);
         DevMode.dmBitsPerPel = 32;
         DevMode.dmPelsWidth = 640;
         DevMode.dmPelsHeight = 480;
         DevMode.dmFields = DM_BITSPERPEL;
 
-        ChangeDisplaySettings(&DevMode, CDS_FULLSCREEN);
+        ChangeDisplaySettingsW(&DevMode, CDS_FULLSCREEN);
         DevMode.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT;
-        ChangeDisplaySettings(&DevMode, CDS_FULLSCREEN);
+        ChangeDisplaySettingsW(&DevMode, CDS_FULLSCREEN);
 
         m_state.window = create_window(
             window_title,
@@ -174,11 +141,11 @@ OpenGL_window::~OpenGL_window()
     // TODO: 2014: This is just a placeholder - the fullscreen OpenGL code isn't currently exercised.
     if(!m_windowed)
     {
-        ::ChangeDisplaySettings(nullptr, 0);
+        ChangeDisplaySettingsW(nullptr, 0);
     }
 }
 
-LRESULT OpenGL_window::window_proc(_In_ HWND window, UINT message, WPARAM w_param, LPARAM l_param) NOEXCEPT
+LRESULT OpenGL_window::window_proc(_In_ HWND window, UINT message, WPARAM w_param, LPARAM l_param) noexcept
 {
     LRESULT return_value = 0;
 
@@ -187,9 +154,9 @@ LRESULT OpenGL_window::window_proc(_In_ HWND window, UINT message, WPARAM w_para
         case WM_SIZE:
         {
             RECT client_rectangle;
-            ::GetClientRect(window, &client_rectangle);
+            GetClientRect(window, &client_rectangle);
 
-            ::glViewport(client_rectangle.left, client_rectangle.top, client_rectangle.right, client_rectangle.bottom);
+            glViewport(client_rectangle.left, client_rectangle.top, client_rectangle.right, client_rectangle.bottom);
 
             break;
         }
@@ -265,7 +232,7 @@ Scoped_current_context create_current_context(_In_ HDC device_context, _In_ HGLR
     return make_scoped_current_context(gl_context);
 }
 
-static void delete_gl_context(_In_ HGLRC gl_context) NOEXCEPT
+static void delete_gl_context(_In_ HGLRC gl_context) noexcept
 {
     if(!wglDeleteContext(gl_context))
     {
@@ -277,10 +244,10 @@ static void delete_gl_context(_In_ HGLRC gl_context) NOEXCEPT
 
 Scoped_gl_context make_scoped_gl_context(_In_ HGLRC gl_context)
 {
-    return std::move(Scoped_gl_context(gl_context, std::function<void (HGLRC)>(delete_gl_context)));
+    return Scoped_gl_context(gl_context, std::function<void (HGLRC)>(delete_gl_context));
 }
 
-static void clear_gl_context(_In_opt_ HGLRC gl_context) NOEXCEPT
+static void clear_gl_context(_In_opt_ HGLRC gl_context) noexcept
 {
     UNREFERENCED_PARAMETER(gl_context);
 
@@ -296,7 +263,7 @@ Scoped_current_context make_scoped_current_context(_In_ HGLRC gl_context)
 {
     // TODO: I can't think of a better way than to pass a gl_context, even though it is unused.
     // A non-null variable is required for the deleter to be part of move construction.
-    return std::move(Scoped_current_context(gl_context, std::function<void (HGLRC)>(clear_gl_context)));
+    return Scoped_current_context(gl_context, std::function<void (HGLRC)>(clear_gl_context));
 }
 
 }
