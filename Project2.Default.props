@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets">
     <Import Project="$(PropertySheetsDir)Artifacts.props" />
   </ImportGroup>
@@ -14,10 +14,16 @@
     <CodeAnalysisSucceededFile>$(CodeAnalysisOutputBaseName).lastcodeanalysissucceeded</CodeAnalysisSucceededFile>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(ConfigurationType)'=='Application'">
-    <ClCompile>
+    <ClCompile Condition="'$(ConsoleApp)'=='true'">
+      <PreprocessorDefinitions>_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Condition="'$(ConsoleApp)'=='false'">
       <PreprocessorDefinitions>_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
-    <Link>
+    <Link Condition="'$(ConsoleApp)'=='true'">
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <Link Condition="'$(ConsoleApp)'=='false'">
       <SubSystem>Windows</SubSystem>
     </Link>
   </ItemDefinitionGroup>

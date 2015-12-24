@@ -1,5 +1,6 @@
-_PropertySheets_ is a shared set of Visual Studio property sheets for common
-build settings and simple integration of shared libraries.
+_Configurations_ is a shared set of Visual Studio property sheets for common
+build settings and simple integration of shared libraries.  In the future,
+other types of configurations (i.e. ClangFormat) will be placed here.
 
 * _Artifacts_ - Contains variables that can be used for output artifacts.
 * _CRTWarnings.Disable_ - Adds preprocessor macros that disable warnings for
