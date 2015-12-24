@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|ARM">
       <Configuration>Debug</Configuration>
@@ -26,7 +26,7 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <Import Project="$(SolutionDir)PropertySheets\Project.Default.props" />
+  <Import Project="$(SolutionDir)Configurations\Project.Default.props" />
   <PropertyGroup Label="Globals">
     <ProjectGuid>{0D716D67-7339-4780-9764-F48808DB8DAE}</ProjectGuid>
     <RootNamespace>PortableRuntime</RootNamespace>
@@ -38,9 +38,9 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings" />
   <ImportGroup Label="PropertySheets">
-    <Import Project="$(PropertySheetsDir)Project2.Default.props" />
-    <Import Project="$(PropertySheetsDir)CRTWarnings.Disable.props" />
-    <Import Project="$(PropertySheetsDir)PortableRuntime.props" />
+    <Import Project="$(ConfigurationsDir)Project2.Default.props" />
+    <Import Project="$(ConfigurationsDir)CRTWarnings.Disable.props" />
+    <Import Project="$(ConfigurationsDir)PortableRuntime.props" />
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
@@ -50,10 +50,11 @@
   <ItemDefinitionGroup />
   <ItemGroup>
     <ClInclude Include="CheckException.h" />
+    <ClInclude Include="Endian.h" />
     <ClInclude Include="PreCompile.h" />
-    <ClInclude Include="PreCPP11.h" />
     <ClInclude Include="Tracing.h" />
     <ClInclude Include="Unicode.h" />
+    <ClCompile Include="Endian.cpp" />
     <ClCompile Include="PreCompile.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
