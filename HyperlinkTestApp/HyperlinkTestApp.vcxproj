@@ -21,7 +21,7 @@
   <Import Project="$(SolutionDir)..\Configurations\Project.Default.props" />
   <PropertyGroup Label="Globals">
     <ProjectGuid>{BBD0D6EA-578C-471B-9983-8C874265F977}</ProjectGuid>
-    <RootNamespace>TestApp</RootNamespace>
+    <RootNamespace>HyperlinkTestApp</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Configuration">
@@ -43,14 +43,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ResourceCompile Include="TestApp.rc" />
+    <ResourceCompile Include="HyperlinkTestApp.rc" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="PreCompile.h" />
     <ClCompile Include="PreCompile.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="WinMain.cpp" />
-    <Manifest Include="TestApp.exe.manifest" />
+    <Manifest Include="HyperlinkTestApp.exe.manifest" />
     <None Include="..\README.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
