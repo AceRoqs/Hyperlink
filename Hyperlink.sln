@@ -1,8 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
-MinimumVisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.25123.0
+MinimumVisualStudioVersion = 14.0.25123.0
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HyperlinkTestApp", "..\Hyperlink\HyperlinkTestApp\HyperlinkTestApp.vcxproj", "{BBD0D6EA-578C-471B-9983-8C874265F977}"
 	ProjectSection(ProjectDependencies) = postProject
 		{0D716D67-7339-4780-9764-F48808DB8DAE} = {0D716D67-7339-4780-9764-F48808DB8DAE}
